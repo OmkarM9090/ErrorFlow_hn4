@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/$/, '');
 
 const emptyForm = {
   email: '',
@@ -15,6 +15,7 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('info');
+  const [backendStatus, setBackendStatus] = useState('checking');
 
   const actions = useMemo(
     () => ({
@@ -37,6 +38,22 @@ function AuthPage() {
     []
   );
 
+  useEffect(() => {
+    const healthCheck = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/`, { method: 'GET' });
+        if (!response.ok) {
+          throw new Error('Backend is not responding correctly');
+        }
+        setBackendStatus('online');
+      } catch (error) {
+        setBackendStatus('offline');
+      }
+    };
+
+    healthCheck();
+  }, []);
+
   const showMessage = (type, text) => {
     setMessageType(type);
     setMessage(text);
@@ -47,29 +64,61 @@ function AuthPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const callApi = async (path, payload, jwtToken = '') => {
-    const response = await fetch(`${API_BASE_URL}${path}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}),
-      },
-      body: JSON.stringify(payload),
-    });
+  const callApi = async ({ path, method = 'POST', payload, jwtToken = '' }) => {
+    let response;
 
-    const data = await response.json();
+    try {
+      response = await fetch(`${API_BASE_URL}${path}`, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}),
+        },
+        ...(payload ? { body: JSON.stringify(payload) } : {}),
+      });
+    } catch (error) {
+      throw new Error('Cannot connect to backend. Start backend on port 5000 and check CORS/API URL.');
+    }
+
+    let data = {};
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.includes('application/json')) {
+      data = await response.json();
+    }
 
     if (!response.ok) {
-      throw new Error(data.message || 'Request failed');
+      throw new Error(data.message || `Request failed with status ${response.status}`);
     }
 
     return data;
   };
 
+  const activateTab = (tab) => {
+    setActiveTab(tab);
+    setMessage('');
+  };
+
+  const validateBeforeSubmit = () => {
+    if (!form.email) {
+      throw new Error('Email is required');
+    }
+
+    if ((activeTab === 'signup' || activeTab === 'login') && form.password.length < 6) {
+      throw new Error('Password must be at least 6 characters');
+    }
+
+    if (activeTab === 'verify' && !/^\d{6}$/.test(form.otp)) {
+      throw new Error('OTP must be exactly 6 digits');
+    }
+  };
+
   const handleSignup = async () => {
-    const data = await callApi('/api/auth/signup', {
-      email: form.email,
-      password: form.password,
+    const data = await callApi({
+      path: '/api/auth/signup',
+      payload: {
+        email: form.email,
+        password: form.password,
+      },
     });
 
     showMessage('success', data.message || 'Signup completed. Check your email for OTP.');
@@ -77,9 +126,12 @@ function AuthPage() {
   };
 
   const handleVerify = async () => {
-    const data = await callApi('/api/auth/verify-otp', {
-      email: form.email,
-      otp: form.otp,
+    const data = await callApi({
+      path: '/api/auth/verify-otp',
+      payload: {
+        email: form.email,
+        otp: form.otp,
+      },
     });
 
     showMessage('success', data.message || 'Email verified successfully. You can login now.');
@@ -87,9 +139,12 @@ function AuthPage() {
   };
 
   const handleLogin = async () => {
-    const data = await callApi('/api/auth/login', {
-      email: form.email,
-      password: form.password,
+    const data = await callApi({
+      path: '/api/auth/login',
+      payload: {
+        email: form.email,
+        password: form.password,
+      },
     });
 
     setToken(data.token);
@@ -99,18 +154,11 @@ function AuthPage() {
 
   const handleProtectedCheck = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/protected`, {
+      const data = await callApi({
+        path: '/api/auth/protected',
         method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        jwtToken: token,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Protected route failed');
-      }
 
       showMessage('success', `Protected route success: ${data.message}`);
     } catch (error) {
@@ -130,6 +178,8 @@ function AuthPage() {
     setMessage('');
 
     try {
+      validateBeforeSubmit();
+
       if (activeTab === 'signup') {
         await handleSignup();
       } else if (activeTab === 'verify') {
@@ -144,103 +194,132 @@ function AuthPage() {
     }
   };
 
+  const tokenPreview = token ? `${token.slice(0, 18)}...${token.slice(-10)}` : 'No JWT token saved';
+
+  const isSignup = activeTab === 'signup';
+  const isVerify = activeTab === 'verify';
+  const isLogin = activeTab === 'login';
+
   return (
     <main className="auth-shell">
       <section className="auth-card">
-        <header className="auth-header">
+        <aside className="auth-side">
           <p className="eyebrow">ErrorFlow Authentication</p>
           <h1>{actions[activeTab].title}</h1>
-          <p>{actions[activeTab].subtitle}</p>
-        </header>
+          <p className="sub-copy">{actions[activeTab].subtitle}</p>
 
-        <nav className="tabs" aria-label="Authentication steps">
-          <button
-            type="button"
-            onClick={() => setActiveTab('signup')}
-            className={activeTab === 'signup' ? 'tab active' : 'tab'}
-          >
-            Signup
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('verify')}
-            className={activeTab === 'verify' ? 'tab active' : 'tab'}
-          >
-            Verify OTP
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('login')}
-            className={activeTab === 'login' ? 'tab active' : 'tab'}
-          >
-            Login
-          </button>
-        </nav>
+          <div className="status-rail">
+            <div className="badge-row">
+              <span className={`dot ${backendStatus}`} />
+              <span className="badge-text">
+                {backendStatus === 'online'
+                  ? 'Backend online'
+                  : backendStatus === 'offline'
+                    ? 'Backend offline'
+                    : 'Checking backend'}
+              </span>
+            </div>
+            <span className="api-label">API: {API_BASE_URL}</span>
+          </div>
 
-        <form onSubmit={submit} className="auth-form">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            value={form.email}
-            onChange={onChange}
-            placeholder="you@example.com"
-            required
-          />
+          <ul className="feature-list">
+            <li>Email + password signup</li>
+            <li>OTP verification by email</li>
+            <li>JWT protected routes</li>
+          </ul>
+        </aside>
 
-          {(activeTab === 'signup' || activeTab === 'login') && (
-            <>
-              <label htmlFor="password">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={form.password}
-                onChange={onChange}
-                placeholder="Minimum 6 characters"
-                minLength={6}
-                required
-              />
-            </>
-          )}
+        <section className="auth-main">
+          <nav className="tabs" aria-label="Authentication steps">
+            <button
+              type="button"
+              onClick={() => activateTab('signup')}
+              className={isSignup ? 'tab active' : 'tab'}
+            >
+              Signup
+            </button>
+            <button
+              type="button"
+              onClick={() => activateTab('verify')}
+              className={isVerify ? 'tab active' : 'tab'}
+            >
+              Verify OTP
+            </button>
+            <button
+              type="button"
+              onClick={() => activateTab('login')}
+              className={isLogin ? 'tab active' : 'tab'}
+            >
+              Login
+            </button>
+          </nav>
 
-          {activeTab === 'verify' && (
-            <>
-              <label htmlFor="otp">OTP</label>
-              <input
-                id="otp"
-                name="otp"
-                type="text"
-                value={form.otp}
-                onChange={onChange}
-                placeholder="6-digit OTP"
-                maxLength={6}
-                required
-              />
-            </>
-          )}
+          <form onSubmit={submit} className="auth-form">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={onChange}
+              placeholder="you@example.com"
+              required
+            />
 
-          <button type="submit" className="submit-btn" disabled={loading}>
-            {loading ? 'Please wait...' : actions[activeTab].button}
-          </button>
-        </form>
+            {(isSignup || isLogin) && (
+              <>
+                <label htmlFor="password">Password</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={form.password}
+                  onChange={onChange}
+                  placeholder="Minimum 6 characters"
+                  minLength={6}
+                  required
+                />
+              </>
+            )}
 
-        {message && <p className={`status ${messageType}`}>{message}</p>}
+            {isVerify && (
+              <>
+                <label htmlFor="otp">OTP</label>
+                <input
+                  id="otp"
+                  name="otp"
+                  type="text"
+                  value={form.otp}
+                  onChange={onChange}
+                  placeholder="6-digit OTP"
+                  maxLength={6}
+                  inputMode="numeric"
+                  required
+                />
+              </>
+            )}
 
-        <div className="token-tools">
-          <button type="button" className="secondary-btn" onClick={handleProtectedCheck} disabled={!token}>
-            Test protected route
-          </button>
-          <button type="button" className="secondary-btn" onClick={clearSession}>
-            Clear local token
-          </button>
-        </div>
+            <button type="submit" className="submit-btn" disabled={loading}>
+              {loading ? 'Please wait...' : actions[activeTab].button}
+            </button>
+          </form>
 
-        <footer className="meta">
-          <span>API Base URL: {API_BASE_URL}</span>
-          <span>{token ? 'JWT token saved in localStorage' : 'No JWT token saved'}</span>
-        </footer>
+          {message && <p className={`status ${messageType}`}>{message}</p>}
+
+          <div className="token-tools">
+            <button type="button" className="secondary-btn" onClick={handleProtectedCheck} disabled={!token || loading}>
+              Test protected route
+            </button>
+            <button type="button" className="secondary-btn" onClick={clearSession} disabled={loading}>
+              Clear local token
+            </button>
+          </div>
+
+          <footer className="meta">
+            <span>{token ? 'JWT token saved in localStorage' : 'No JWT token saved'}</span>
+            <span className="token-preview">Token: {tokenPreview}</span>
+          </footer>
+        </section>
       </section>
     </main>
   );
