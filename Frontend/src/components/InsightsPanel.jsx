@@ -5,7 +5,7 @@ import {
     Zap, Search, Heading1, Image, MousePointerClick,
     Layers, BarChart3, ShieldCheck, ListOrdered, Palette,
     ChevronDown, ChevronUp, CheckCircle2, AlertTriangle, XCircle,
-    Loader2, Sparkles
+    Loader2, Sparkles, Info, Wrench, Copy, Check, X
 } from 'lucide-react';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -17,16 +17,179 @@ const typeConfig = {
 
 const getConfig = (type) => typeConfig[type] || typeConfig.warning;
 
+// ── Generate a copy-paste ready fix prompt ───────────────────────────────────
+function generateFixPrompt(item) {
+    const elements = Array.isArray(item.elements) && item.elements.length > 0
+        ? item.elements.map((el) => `  - ${el}`).join('\n')
+        : '  (No specific elements listed)';
+
+    return `Fix the following accessibility issue in my website:
+
+ISSUE: ${item.message}
+
+AFFECTED ELEMENTS:
+${elements}
+
+INSTRUCTIONS:
+- Find and fix all the affected elements listed above in my codebase.
+- Follow WCAG 2.1 AA guidelines.
+- Make minimal, targeted changes — do not refactor unrelated code.
+- If the issue is about missing attributes (alt, aria-label, meta tags), add them with appropriate values.
+- If the issue is about structural problems (e.g., multiple H1 tags), restructure the HTML to use proper semantic heading hierarchy.
+- After making changes, briefly explain what was changed and why.
+`;
+}
+
+// ── Fix Now Modal ────────────────────────────────────────────────────────────
+function FixNowModal({ item, onClose }) {
+    const [copied, setCopied] = useState(false);
+    const prompt = generateFixPrompt(item);
+
+    const handleCopy = async () => {
+        try {
+            await navigator.clipboard.writeText(prompt);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        } catch {
+            // Fallback for older browsers
+            const textarea = document.createElement('textarea');
+            textarea.value = prompt;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm px-4" onClick={onClose}>
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="relative w-full max-w-2xl rounded-2xl border border-slate-200 bg-white shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* Header */}
+                <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+                    <div className="flex items-center gap-3">
+                        <div className="inline-flex rounded-lg bg-rose-100 p-2">
+                            <Wrench size={18} className="text-rose-600" />
+                        </div>
+                        <div>
+                            <h3 className="font-serif text-lg font-semibold text-slate-900">Fix Now — Copy Prompt</h3>
+                            <p className="text-xs text-slate-500">Paste this into your AI coding agent to auto-fix the issue</p>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                    >
+                        <X size={20} />
+                    </button>
+                </div>
+
+                {/* Prompt content */}
+                <div className="px-6 py-4">
+                    <pre className="max-h-[400px] overflow-auto whitespace-pre-wrap rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800 font-mono leading-relaxed">
+                        {prompt}
+                    </pre>
+                </div>
+
+                {/* Footer */}
+                <div className="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+                    >
+                        Close
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleCopy}
+                        className={`inline-flex items-center gap-2 rounded-xl px-5 py-2 text-sm font-semibold text-white shadow-lg transition ${copied
+                                ? 'bg-emerald-500 shadow-emerald-500/25'
+                                : 'bg-gradient-to-r from-indigo-600 to-violet-600 shadow-indigo-500/25 hover:shadow-xl'
+                            }`}
+                    >
+                        {copied ? <><Check size={16} /> Copied!</> : <><Copy size={16} /> Copy Prompt</>}
+                    </button>
+                </div>
+            </motion.div>
+        </div>
+    );
+}
+
 // ── Tiny reusable components ─────────────────────────────────────────────────
 
 function InsightBadge({ item }) {
     const cfg = getConfig(item.type);
     const Icon = cfg.icon;
+    const isError = item.type === 'error';
+    const hasElements = item.type !== 'success' && Array.isArray(item.elements) && item.elements.length > 0;
+    const MAX_VISIBLE = 6;
+    const [showAll, setShowAll] = useState(false);
+    const [showFixModal, setShowFixModal] = useState(false);
+    const visibleElements = hasElements
+        ? (showAll ? item.elements : item.elements.slice(0, MAX_VISIBLE))
+        : [];
+    const hasMore = hasElements && item.elements.length > MAX_VISIBLE;
+
     return (
-        <div className={`flex items-start gap-3 rounded-xl ${cfg.bg} ${cfg.border} border p-3`}>
-            <Icon size={16} className={`mt-0.5 shrink-0 ${cfg.text}`} />
-            <span className={`text-sm leading-relaxed ${cfg.text}`}>{item.message}</span>
-        </div>
+        <>
+            <div className={`rounded-xl ${cfg.bg} ${cfg.border} border`}>
+                <div className="flex items-start gap-3 p-3">
+                    <Icon size={16} className={`mt-0.5 shrink-0 ${cfg.text}`} />
+                    <span className={`flex-1 text-sm leading-relaxed ${cfg.text}`}>{item.message}</span>
+                    {isError && (
+                        <button
+                            type="button"
+                            onClick={() => setShowFixModal(true)}
+                            className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-rose-600 px-3 py-1 text-xs font-bold text-white shadow-sm transition hover:bg-rose-700 hover:shadow-md"
+                        >
+                            <Wrench size={12} />
+                            Fix Now
+                        </button>
+                    )}
+                </div>
+                {hasElements && (
+                    <div className={`mx-3 mb-3 rounded-lg bg-white/60 border ${cfg.border} p-2.5`}>
+                        <p className={`mb-1.5 text-[10px] font-bold uppercase tracking-widest ${cfg.text} opacity-60`}>
+                            Affected Elements ({item.elements.length})
+                        </p>
+                        <div className="space-y-1">
+                            {visibleElements.map((el, i) => (
+                                <div key={i} className="flex items-start gap-2 text-xs">
+                                    <span className={`mt-1 h-1.5 w-1.5 shrink-0 rounded-full ${cfg.dot}`} />
+                                    <code className={`font-mono ${cfg.text}`}>{el}</code>
+                                </div>
+                            ))}
+                        </div>
+                        {hasMore && (
+                            <button
+                                type="button"
+                                onClick={() => setShowAll((p) => !p)}
+                                className={`mt-2 text-xs font-semibold ${cfg.text} hover:opacity-70 transition`}
+                            >
+                                {showAll ? '▲ Show less' : `▼ Show all ${item.elements.length} elements`}
+                            </button>
+                        )}
+                    </div>
+                )}
+            </div>
+
+            {/* Fix Now Modal */}
+            <AnimatePresence>
+                {showFixModal && (
+                    <FixNowModal item={item} onClose={() => setShowFixModal(false)} />
+                )}
+            </AnimatePresence>
+        </>
     );
 }
 
@@ -178,68 +341,82 @@ export default function InsightsPanel({ insights, loading, error, onGenerate, ha
             </CollapsibleSection>
 
             {/* ── Cross-Cutting Insights ── */}
-            {crossCuttingInsights && (
-                <CollapsibleSection icon={Layers} title="Cross-Cutting Insights">
-                    <ColorCodedList items={crossCuttingInsights.green} color="green" />
-                    <ColorCodedList items={crossCuttingInsights.yellow} color="yellow" />
-                    <ColorCodedList items={crossCuttingInsights.red} color="red" />
-                </CollapsibleSection>
-            )}
+            <CollapsibleSection icon={Layers} title="Cross-Cutting Insights">
+                {crossCuttingInsights && (crossCuttingInsights.green?.length > 0 || crossCuttingInsights.yellow?.length > 0 || crossCuttingInsights.red?.length > 0) ? (
+                    <>
+                        <ColorCodedList items={crossCuttingInsights.green} color="green" />
+                        <ColorCodedList items={crossCuttingInsights.yellow} color="yellow" />
+                        <ColorCodedList items={crossCuttingInsights.red} color="red" />
+                    </>
+                ) : (
+                    <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
+                        <Info size={16} className="shrink-0" />
+                        No cross-cutting insights found.
+                    </div>
+                )}
+            </CollapsibleSection>
 
             {/* ── Aggregate Report ── */}
-            {aggregateReport && (
-                <CollapsibleSection icon={BarChart3} title="Aggregate Report">
-                    {aggregateReport.passed?.length > 0 && (
-                        <div>
-                            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-emerald-600">✅ Passed</p>
-                            {aggregateReport.passed.map((p, i) => (
-                                <div key={i} className="mb-1 rounded-lg bg-emerald-50 border border-emerald-100 px-3 py-2 text-sm text-emerald-700">{p}</div>
-                            ))}
-                        </div>
-                    )}
-                    {aggregateReport.warnings?.length > 0 && (
-                        <div>
-                            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-amber-600">⚠️ Warnings</p>
-                            {aggregateReport.warnings.map((w, i) => (
-                                <div key={i} className="mb-1 rounded-lg bg-amber-50 border border-amber-100 px-3 py-2 text-sm text-amber-700">{w}</div>
-                            ))}
-                        </div>
-                    )}
-                    {aggregateReport.critical?.length > 0 && (
-                        <div>
-                            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-rose-600">❌ Critical</p>
-                            {aggregateReport.critical.map((c, i) => (
-                                <div key={i} className="mb-1 rounded-lg bg-rose-50 border border-rose-100 px-3 py-2 text-sm text-rose-700">{c}</div>
-                            ))}
-                        </div>
-                    )}
-                    {aggregateReport.topIssues?.length > 0 && (
-                        <div>
-                            <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-600">📊 Top Issues</p>
-                            <div className="overflow-hidden rounded-xl border border-slate-200">
-                                <table className="w-full text-sm">
-                                    <thead className="bg-slate-50 text-left">
-                                        <tr>
-                                            <th className="px-3 py-2 font-semibold text-slate-600">#</th>
-                                            <th className="px-3 py-2 font-semibold text-slate-600">Issue</th>
-                                            <th className="px-3 py-2 font-semibold text-slate-600">Affected</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {aggregateReport.topIssues.map((issue, i) => (
-                                            <tr key={i} className="border-t border-slate-100">
-                                                <td className="px-3 py-2 font-medium text-slate-900">{issue.rank}</td>
-                                                <td className="px-3 py-2 text-slate-700">{issue.issue}</td>
-                                                <td className="px-3 py-2 text-slate-500">{issue.affectedElements}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+            <CollapsibleSection icon={BarChart3} title="Aggregate Report">
+                {aggregateReport && (aggregateReport.passed?.length > 0 || aggregateReport.warnings?.length > 0 || aggregateReport.critical?.length > 0 || aggregateReport.topIssues?.length > 0) ? (
+                    <>
+                        {aggregateReport.passed?.length > 0 && (
+                            <div>
+                                <p className="mb-2 text-xs font-bold uppercase tracking-wider text-emerald-600">✅ Passed</p>
+                                {aggregateReport.passed.map((p, i) => (
+                                    <div key={i} className="mb-1 rounded-lg bg-emerald-50 border border-emerald-100 px-3 py-2 text-sm text-emerald-700">{p}</div>
+                                ))}
                             </div>
-                        </div>
-                    )}
-                </CollapsibleSection>
-            )}
+                        )}
+                        {aggregateReport.warnings?.length > 0 && (
+                            <div>
+                                <p className="mb-2 text-xs font-bold uppercase tracking-wider text-amber-600">⚠️ Warnings</p>
+                                {aggregateReport.warnings.map((w, i) => (
+                                    <div key={i} className="mb-1 rounded-lg bg-amber-50 border border-amber-100 px-3 py-2 text-sm text-amber-700">{w}</div>
+                                ))}
+                            </div>
+                        )}
+                        {aggregateReport.critical?.length > 0 && (
+                            <div>
+                                <p className="mb-2 text-xs font-bold uppercase tracking-wider text-rose-600">❌ Critical</p>
+                                {aggregateReport.critical.map((c, i) => (
+                                    <div key={i} className="mb-1 rounded-lg bg-rose-50 border border-rose-100 px-3 py-2 text-sm text-rose-700">{c}</div>
+                                ))}
+                            </div>
+                        )}
+                        {aggregateReport.topIssues?.length > 0 && (
+                            <div>
+                                <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-600">📊 Top Issues</p>
+                                <div className="overflow-hidden rounded-xl border border-slate-200">
+                                    <table className="w-full text-sm">
+                                        <thead className="bg-slate-50 text-left">
+                                            <tr>
+                                                <th className="px-3 py-2 font-semibold text-slate-600">#</th>
+                                                <th className="px-3 py-2 font-semibold text-slate-600">Issue</th>
+                                                <th className="px-3 py-2 font-semibold text-slate-600">Affected</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {aggregateReport.topIssues.map((issue, i) => (
+                                                <tr key={i} className="border-t border-slate-100">
+                                                    <td className="px-3 py-2 font-medium text-slate-900">{issue.rank}</td>
+                                                    <td className="px-3 py-2 text-slate-700">{issue.issue}</td>
+                                                    <td className="px-3 py-2 text-slate-500">{issue.affectedElements}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
+                        <Info size={16} className="shrink-0" />
+                        No aggregate report data found.
+                    </div>
+                )}
+            </CollapsibleSection>
 
             {/* ── WCAG Compliance ── */}
             {wcagCompliance?.length > 0 && (

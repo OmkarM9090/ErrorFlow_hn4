@@ -91,10 +91,10 @@ OUTPUT SCHEMA — return exactly this structure:
 
   "performanceHealth": {
     "insights": [
-      { "type": "success|warning|error", "message": "<insight>" }
+      { "type": "success|warning|error", "message": "<insight>", "elements": ["<specific element or value, only for warning/error>"] }
     ],
     "recommendations": [
-      { "type": "success|warning|error", "message": "<recommendation>" }
+      { "type": "success|warning|error", "message": "<recommendation>", "elements": ["<specific element or value, only for warning/error>"] }
     ]
   },
 
@@ -109,28 +109,28 @@ OUTPUT SCHEMA — return exactly this structure:
 
   "headingStructure": {
     "insights": [
-      { "type": "success|warning|error", "message": "<insight>" }
+      { "type": "success|warning|error", "message": "<insight>", "elements": ["H1: Omkar Mahadik", "H1: Hello 👋"] }
     ],
     "recommendations": [
-      { "type": "success|warning|error", "message": "<recommendation>" }
+      { "type": "success|warning|error", "message": "<recommendation>", "elements": ["<specific heading text>"] }
     ]
   },
 
   "imageAccessibility": {
     "insights": [
-      { "type": "success|warning|error", "message": "<insight>" }
+      { "type": "success|warning|error", "message": "<insight>", "elements": ["img alt='Oggy' — too generic", "img with no alt"] }
     ],
     "recommendations": [
-      { "type": "success|warning|error", "message": "<recommendation>" }
+      { "type": "success|warning|error", "message": "<recommendation>", "elements": ["<specific image or alt text>"] }
     ]
   },
 
   "buttonInteractive": {
     "insights": [
-      { "type": "success|warning|error", "message": "<insight>" }
+      { "type": "success|warning|error", "message": "<insight>", "elements": ["<button> with no accessible name"] }
     ],
     "recommendations": [
-      { "type": "success|warning|error", "message": "<recommendation>" }
+      { "type": "success|warning|error", "message": "<recommendation>", "elements": ["<specific button text or selector>"] }
     ]
   },
 
@@ -169,6 +169,20 @@ RULES:
 - Be specific — reference actual element counts, timing values, and tag names from the audit data.
 - For WCAG compliance, cover at least: 1.1.1, 1.3.1, 2.4.6, 4.1.2.
 - Keep messages concise but actionable.
+
+CRITICAL ELEMENT LISTING RULES:
+- For EVERY "warning" or "error" insight/recommendation, you MUST include an "elements" array that lists ALL the specific problematic elements found in the audit data.
+- DO NOT just say "Found 7 H1 tags" — you MUST list every single one by their text content in the "elements" array.
+- Examples of what to include:
+  * Headings: List each heading with its level and text → ["H1: Omkar Mahadik", "H1: Hello 👋", "H1: I am Omkar", "H1: Overview"]
+  * Images: List each image with its alt text or src → ["img alt='Oggy' — vague/decorative", "img src='profile.jpg' — missing alt"]
+  * Buttons: List each button by its text or lack thereof → ["<button> (no text, no aria-label)", "button 'Submit' — OK"]
+  * Links: List each link by its text → ["<a href='/contact'> (empty link text)", "<a> 'Click here' — vague"]
+  * Meta: List the specific meta issues → ["meta description: missing", "title: 'Omkar Mahadik' — too short"]
+  * Performance: List specific metrics → ["wallClockMs: 2513ms", "TTFB: 17ms", "DOMContentLoaded: 198ms"]
+- For "success" type items, the "elements" array can be empty [] or omitted entirely.
+- For crossCuttingInsights red/yellow items, include the specific elements in the string itself.
+- For aggregateReport topIssues, include exact element names/text in the "issue" field.
 `;
 }
 
@@ -183,31 +197,79 @@ function buildFallbackInsights(auditData) {
   const buttons = page.buttons || [];
   const issues = auditData.allIssues || {};
 
-  const h1Count = headings.filter((h) => h.level === 1).length;
-  const missingAltCount = images.filter((i) => !i.alt && !i.hasAlt).length;
-  const noNameButtons = buttons.filter((b) => b.hasNoAccessibleName).length;
+  const h1Tags = headings.filter((h) => h.level === 1);
+  const h1Count = h1Tags.length;
+  const missingAltImages = images.filter((i) => !i.alt && !i.hasAlt);
+  const missingAltCount = missingAltImages.length;
+  const noNameBtns = buttons.filter((b) => b.hasNoAccessibleName);
+  const noNameButtons = noNameBtns.length;
 
   const performanceInsights = [];
-  if (timings.ttfb) performanceInsights.push({ type: timings.ttfb < 100 ? "success" : "warning", message: `TTFB is ${timings.ttfb}ms${timings.ttfb < 100 ? " — excellent server response." : " — consider optimizing server response time."}` });
-  if (timings.load) performanceInsights.push({ type: timings.load < 2000 ? "success" : "warning", message: `Full page load: ${timings.load}ms${timings.load < 2000 ? " — within acceptable range." : " — aim for under 2 seconds."}` });
+  if (timings.ttfb) performanceInsights.push({
+    type: timings.ttfb < 100 ? "success" : "warning",
+    message: `TTFB is ${timings.ttfb}ms${timings.ttfb < 100 ? " — excellent server response." : " — consider optimizing server response time."}`,
+    ...(timings.ttfb >= 100 ? { elements: [`TTFB: ${timings.ttfb}ms (target: < 100ms)`] } : {}),
+  });
+  if (timings.load) performanceInsights.push({
+    type: timings.load < 2000 ? "success" : "warning",
+    message: `Full page load: ${timings.load}ms${timings.load < 2000 ? " — within acceptable range." : " — aim for under 2 seconds."}`,
+    ...(timings.load >= 2000 ? { elements: [`Load time: ${timings.load}ms (target: < 2000ms)`, `DOMContentLoaded: ${timings.domContentLoaded || 'N/A'}ms`] } : {}),
+  });
 
   const seoInsights = [];
-  if (!meta.description) seoInsights.push({ type: "error", message: "No meta description found. Add one (50–160 chars) for better SEO." });
+  if (!meta.description) seoInsights.push({
+    type: "error",
+    message: "No meta description found. Add one (50–160 chars) for better SEO.",
+    elements: ["<meta name=\"description\" content=\"...\"> — missing from <head>"],
+  });
+  if (meta.title && meta.title.length < 20) seoInsights.push({
+    type: "warning",
+    message: `Page title "${meta.title}" is very short. Aim for 30-60 characters.`,
+    elements: [`<title>${meta.title}</title> — only ${meta.title.length} chars`],
+  });
   if (meta.lang) seoInsights.push({ type: "success", message: `Language attribute set to "${meta.lang}" — good for accessibility.` });
   if (meta.viewport) seoInsights.push({ type: "success", message: "Viewport meta tag configured — essential for mobile responsiveness." });
 
   const headingInsights = [];
-  if (h1Count > 1) headingInsights.push({ type: "error", message: `Found ${h1Count} H1 tags. Use only one H1 per page.` });
-  else if (h1Count === 1) headingInsights.push({ type: "success", message: "Single H1 tag found — correct semantic structure." });
-  else headingInsights.push({ type: "warning", message: "No H1 tag found. Each page should have exactly one H1." });
+  if (h1Count > 1) {
+    headingInsights.push({
+      type: "error",
+      message: `Found ${h1Count} H1 tags. Use only one H1 per page.`,
+      elements: h1Tags.map((h) => `H1: "${h.text || '(empty)'}"`),
+    });
+  } else if (h1Count === 1) {
+    headingInsights.push({ type: "success", message: "Single H1 tag found — correct semantic structure." });
+  } else {
+    headingInsights.push({ type: "warning", message: "No H1 tag found. Each page should have exactly one H1.", elements: ["No <h1> element found in the page"] });
+  }
 
   const imageInsights = [];
-  if (missingAltCount > 0) imageInsights.push({ type: "error", message: `${missingAltCount} image(s) missing alt text.` });
-  else if (images.length > 0) imageInsights.push({ type: "success", message: "All images have alt text — passes WCAG 1.1.1." });
+  if (missingAltCount > 0) {
+    imageInsights.push({
+      type: "error",
+      message: `${missingAltCount} image(s) missing alt text.`,
+      elements: missingAltImages.map((img) => {
+        const src = (img.src || "").substring(0, 60);
+        return `<img src="${src}"> — no alt attribute`;
+      }),
+    });
+  } else if (images.length > 0) {
+    imageInsights.push({ type: "success", message: "All images have alt text — passes WCAG 1.1.1." });
+  }
 
   const buttonInsights = [];
-  if (noNameButtons > 0) buttonInsights.push({ type: "error", message: `${noNameButtons} button(s) have no accessible name.` });
-  else if (buttons.length > 0) buttonInsights.push({ type: "success", message: "All buttons have accessible names." });
+  if (noNameButtons > 0) {
+    buttonInsights.push({
+      type: "error",
+      message: `${noNameButtons} button(s) have no accessible name.`,
+      elements: noNameBtns.map((btn, i) => {
+        const label = btn.text || btn.ariaLabel || `(no text, no aria-label)`;
+        return `Button #${i + 1}: ${label}`;
+      }),
+    });
+  } else if (buttons.length > 0) {
+    buttonInsights.push({ type: "success", message: "All buttons have accessible names." });
+  }
 
   // Build priority fixes from issues
   const priorityFixes = [];
