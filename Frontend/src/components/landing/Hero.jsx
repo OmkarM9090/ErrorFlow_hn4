@@ -3,7 +3,7 @@ import { gsap } from 'gsap';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
-const Hero = () => {
+const Hero = ({ onOpenAuth }) => {
   const comp = useRef(null);
 
   useLayoutEffect(() => {
@@ -63,9 +63,10 @@ const Hero = () => {
         <motion.button 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={onOpenAuth}
           className="flex items-center gap-2 bg-indigo-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-indigo-700 shadow-lg shadow-indigo-200"
         >
-          Analyze URL Now <ArrowRight size={20} />
+          Start Secure Access <ArrowRight size={20} />
         </motion.button>
       </div>
 

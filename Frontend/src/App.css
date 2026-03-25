@@ -74,6 +74,28 @@
   padding: 32px;
 }
 
+.auth-topbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.back-btn {
+  border: 1px solid rgba(58, 71, 88, 0.2);
+  background: #ffffff;
+  color: #394658;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  border-color: #8f5f00;
+  transform: translateY(-1px);
+}
+
 .tabs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -180,13 +202,6 @@
   border: 1px solid #c6dbff;
 }
 
-.footer-note {
-  margin: 14px 0 0;
-  font-size: 0.8rem;
-  color: #5f6f84;
-  word-break: break-word;
-}
-
 @media (max-width: 640px) {
   .auth-shell {
     padding: 12px;
@@ -205,6 +220,11 @@
 
   .auth-main {
     padding: 20px;
+  }
+
+  .auth-topbar {
+    justify-content: flex-start;
+    margin-bottom: 8px;
   }
 
   .tabs {

@@ -26,7 +26,7 @@ const emptyForm = {
   otp: '',
 };
 
-function AuthPage() {
+function AuthPage({ onBackToLanding }) {
   const [activeTab, setActiveTab] = useState('signup');
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
@@ -125,10 +125,6 @@ function AuthPage() {
       },
     });
 
-    if (data.token) {
-      localStorage.setItem('authToken', data.token);
-    }
-
     showMessage('success', data.message || 'Login successful.');
   };
 
@@ -175,6 +171,12 @@ function AuthPage() {
         </aside>
 
         <section className="auth-main">
+          <div className="auth-topbar">
+            <button type="button" className="back-btn" onClick={onBackToLanding}>
+              Back to Landing
+            </button>
+          </div>
+
           <nav className="tabs" aria-label="Authentication steps">
             <button
               type="button"
@@ -250,8 +252,6 @@ function AuthPage() {
           </form>
 
           {message && <p className={`status ${messageType}`}>{message}</p>}
-
-          <p className="footer-note">API base: {API_BASE_URL}</p>
         </section>
       </section>
     </main>

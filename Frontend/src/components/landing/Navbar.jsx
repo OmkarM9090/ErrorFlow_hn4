@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ScanEye } from 'lucide-react';
 
-const Navbar = () => {
+const Navbar = ({ onOpenAuth }) => {
   return (
     <motion.nav 
       initial={{ y: -100, opacity: 0 }}
@@ -28,9 +28,10 @@ const Navbar = () => {
         <motion.button 
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={onOpenAuth}
           className="bg-slate-900 text-white px-5 py-2.5 rounded-full font-medium hover:bg-slate-800 transition-colors shadow-md"
         >
-          Start Audit
+          Get Started
         </motion.button>
       </div>
     </motion.nav>
