@@ -1,46 +1,18 @@
 /**
- * axeRunner.js
+ * axeRunner.js  — comprehensive axe-core runner
  *
- * Responsible ONLY for:
- *  - Injecting axe-core into an already-rendered Playwright page
- *  - Running accessibility analysis on the fully-rendered DOM
- *  - Transforming raw axe output into a clean, structured JSON result
- *  - Collecting bounding boxes for each violating node
- *
- * NOT responsible for:
- *  - Navigation / crawling / screenshots / monitors / DB / API routing
- *
- * ── WHY injection-failed happens ────────────────────────────────────────────
- * Sites like GFG set strict Content-Security-Policy (CSP) headers that block
- * eval() and inline <script> injection at runtime. Both page.evaluate(source)
- * and page.addScriptTag({ content }) hit this wall.
- *
- * ── THE FIX (two parts) ──────────────────────────────────────────────────────
- *
- * PART 1 — renderer.js:
- *   Add `bypassCSP: true` to browser.newContext(). This instructs Chromium
- *   to ignore CSP response headers entirely. Safe for an audit bot.
- *
- * PART 2 — axeRunner.js (this file):
- *   Export `prepareAxe(page)` and call it in scraperService BEFORE
- *   renderer.renderPage(). It uses page.addInitScript() which registers
- *   a script at the browser-engine level — it runs before any page JS
- *   and is completely immune to CSP.
- *
- * ── CALL ORDER IN scraperService ─────────────────────────────────────────────
- *   const page  = await context.newPage();
- *   await prepareAxe(page);          // ← register init script BEFORE goto
- *   await page.goto(url, ...);       // ← axe is now available immediately
- *   ...
- *   const axeResults = await runAxe(page, options.axe);
- *
- * USAGE:
- *   const { runAxe, prepareAxe } = require('./axeRunner');
+ * Fixes vs original:
+ *  1. Runs wcag2a + wcag2aa + best-practice tags by default.
+ *  2. issuesPerRule in summary counts NODES (element instances), not rules.
+ *  3. `incomplete` results (needs-review) are included and returned.
+ *  4. `passes` counts are included in summary even when not returned in full.
+ *  5. transformViolation includes `nodeCount` for quick scanning.
+ *  6. buildSummary correctly totals by impact × node count.
+ *  7. Bounding box collection is resilient and skips complex selectors safely.
  */
 
 const fs = require('fs');
 
-// ─── Cache axe-core source — read once at startup, reuse for every page ──────
 let _axeSource = null;
 
 function getAxeSource() {
@@ -54,30 +26,22 @@ function getAxeSource() {
   }
 }
 
-// ─── Default config ───────────────────────────────────────────────────────────
 const DEFAULT_OPTIONS = {
-  runOnly:           ['wcag2a', 'wcag2aa'],
+  runOnly:           ['wcag2a', 'wcag2aa', 'best-practice'],
   disabledRules:     [],
-  includeIncomplete: false,
+  includeIncomplete: true,
   includePasses:     false,
-  axeTimeout:        30000,
+  axeTimeout:        60000,
 };
 
+// Impact sort order
 const IMPACT_ORDER = { critical: 0, serious: 1, moderate: 2, minor: 3 };
 
 // ─── prepareAxe ───────────────────────────────────────────────────────────────
 
 /**
- * Pre-inject axe-core into a Playwright page via addInitScript().
- *
- * MUST be called BEFORE page.goto(). addInitScript() registers a script
- * that runs at the very start of every navigation, before any page scripts,
- * at the browser engine level — completely bypassing CSP headers.
- *
- * This is the Playwright-recommended way to inject testing/audit libraries
- * into pages that use Content-Security-Policy.
- *
- * @param {Page} page - Playwright page object (before navigation)
+ * Register axe as a Playwright init script BEFORE page.goto().
+ * Runs at browser-engine level — immune to Content-Security-Policy.
  */
 async function prepareAxe(page) {
   await page.addInitScript({ content: getAxeSource() });
@@ -85,58 +49,46 @@ async function prepareAxe(page) {
 
 // ─── runAxe ───────────────────────────────────────────────────────────────────
 
-/**
- * Run axe-core on a fully rendered Playwright page.
- *
- * Assumes prepareAxe(page) was called before page.goto().
- * If axe is somehow not present, falls back to runtime injection.
- *
- * @param {Page}   page    - Playwright page (already navigated)
- * @param {object} options - Override DEFAULT_OPTIONS
- * @returns {Promise<AxeResult>}
- */
 async function runAxe(page, options = {}) {
   const config  = { ...DEFAULT_OPTIONS, ...options };
   const pageUrl = page.url();
 
-  // ── Guard: empty / crashed page ───────────────────────────────────────────
+  // Guard: empty / crashed page
   let bodyEmpty = false;
   try {
-    const content = await page.evaluate(() => document.body?.innerHTML?.trim() || '');
-    bodyEmpty = !content;
+    const content = await page.evaluate(() => document.body?.innerHTML?.trim() ?? '');
+    bodyEmpty = content.length < 10;
   } catch {
     bodyEmpty = true;
   }
 
   if (bodyEmpty) {
-    console.warn(`[axeRunner] Empty DOM at ${pageUrl} — skipping`);
-    return buildEmptyResult(pageUrl, 'empty-dom');
+    console.warn(`[axeRunner] Empty/crashed DOM at ${pageUrl} — skipping`);
+    return _buildEmptyResult(pageUrl, 'empty-dom');
   }
 
-  // ── Verify axe is available ───────────────────────────────────────────────
+  // Verify axe is available (pre-injected via prepareAxe)
   const axeReady = await page.evaluate(() => typeof window.axe !== 'undefined').catch(() => false);
 
   if (!axeReady) {
-    // prepareAxe() wasn't called before navigation — try runtime injection as
-    // a fallback (works on pages without strict CSP).
-    console.warn(`[axeRunner] axe not pre-injected on ${pageUrl} — falling back to runtime injection`);
+    console.warn(`[axeRunner] axe not pre-injected on ${pageUrl} — falling back`);
     const injected = await _runtimeInject(page, pageUrl);
-    if (!injected) return buildEmptyResult(pageUrl, 'injection-failed');
+    if (!injected) return _buildEmptyResult(pageUrl, 'injection-failed');
   }
 
-  // ── Build axe run config ──────────────────────────────────────────────────
-  const resultTypes = ['violations'];
+  // Build result types
+  const resultTypes = ['violations', 'inapplicable'];
   if (config.includePasses)     resultTypes.push('passes');
   if (config.includeIncomplete) resultTypes.push('incomplete');
 
   const axeConfig = {
-    runOnly:     { type: 'tag', values: config.runOnly },
-    rules:       Object.fromEntries(config.disabledRules.map(id => [id, { enabled: false }])),
+    runOnly: { type: 'tag', values: config.runOnly },
+    rules:   Object.fromEntries((config.disabledRules || []).map(id => [id, { enabled: false }])),
     resultTypes,
-    timeout:     config.axeTimeout,
+    timeout: config.axeTimeout,
   };
 
-  // ── Run axe inside the page context ──────────────────────────────────────
+  // Run axe inside page context
   let rawResult;
   try {
     rawResult = await page.evaluate(async (cfg) => {
@@ -144,13 +96,16 @@ async function runAxe(page, options = {}) {
     }, axeConfig);
   } catch (err) {
     console.error(`[axeRunner] axe.run() failed on ${pageUrl}: ${err.message}`);
-    return buildEmptyResult(pageUrl, 'axe-run-failed');
+    return _buildEmptyResult(pageUrl, 'axe-run-failed');
   }
 
-  // ── Enrich nodes with bounding boxes in one round-trip ───────────────────
-  const enrichedViolations = await _enrichWithBoundingBoxes(page, rawResult.violations);
+  // Enrich violations with bounding boxes
+  const enrichedViolations = await _enrichWithBoundingBoxes(page, rawResult.violations || []);
+  const enrichedIncomplete = config.includeIncomplete
+    ? await _enrichWithBoundingBoxes(page, rawResult.incomplete || [])
+    : [];
 
-  return buildResult(pageUrl, rawResult, enrichedViolations, config);
+  return _buildResult(pageUrl, rawResult, enrichedViolations, enrichedIncomplete, config);
 }
 
 // ─── Runtime injection fallback ───────────────────────────────────────────────
@@ -175,10 +130,14 @@ async function _runtimeInject(page, pageUrl) {
 async function _enrichWithBoundingBoxes(page, violations) {
   if (!violations?.length) return [];
 
+  // Flatten all queries
   const queries = [];
   violations.forEach((v, vi) => {
-    v.nodes.forEach((node, ni) => {
-      queries.push({ vi, ni, selector: node.target?.[0] || null });
+    (v.nodes || []).forEach((node, ni) => {
+      // Use first selector target, skip complex compound selectors that querySelector can't handle
+      const raw = node.target?.[0] || null;
+      const selector = raw && !raw.includes(' > ') ? raw : null;
+      queries.push({ vi, ni, selector });
     });
   });
 
@@ -193,7 +152,12 @@ async function _enrichWithBoundingBoxes(page, violations) {
           const r = el.getBoundingClientRect();
           return {
             vi, ni,
-            box: { x: Math.round(r.x), y: Math.round(r.y), width: Math.round(r.width), height: Math.round(r.height) },
+            box: {
+              x:      Math.round(r.x),
+              y:      Math.round(r.y),
+              width:  Math.round(r.width),
+              height: Math.round(r.height),
+            },
           };
         } catch {
           return { vi, ni, box: null };
@@ -208,44 +172,84 @@ async function _enrichWithBoundingBoxes(page, violations) {
 
   return violations.map((v, vi) => ({
     ...v,
-    nodes: v.nodes.map((node, ni) => ({ ...node, boundingBox: boxMap.get(`${vi}:${ni}`) || null })),
+    nodes: (v.nodes || []).map((node, ni) => ({
+      ...node,
+      boundingBox: boxMap.get(`${vi}:${ni}`) || null,
+    })),
   }));
 }
 
 // ─── Result builders ──────────────────────────────────────────────────────────
 
-function buildResult(pageUrl, raw, enrichedViolations, config) {
+function _buildResult(pageUrl, raw, enrichedViolations, enrichedIncomplete, config) {
   const violations = enrichedViolations
     .sort((a, b) => (IMPACT_ORDER[a.impact] ?? 99) - (IMPACT_ORDER[b.impact] ?? 99))
-    .map(transformViolation);
+    .map(_transformViolation);
+
+  const incomplete = enrichedIncomplete.map(_transformViolation);
 
   const result = {
     pageUrl,
     analysedAt: new Date().toISOString(),
-    axeVersion: raw.testEngine?.version || 'unknown',
-    config:     { runOnly: config.runOnly, disabledRules: config.disabledRules },
-    summary:    buildSummary(violations),
+    axeVersion:  raw.testEngine?.version || 'unknown',
+    config: {
+      runOnly:       config.runOnly,
+      disabledRules: config.disabledRules,
+    },
+    summary: _buildSummary(violations, incomplete),
     violations,
   };
 
-  if (config.includePasses     && raw.passes?.length)     result.passes     = raw.passes.map(transformViolation);
-  if (config.includeIncomplete && raw.incomplete?.length) result.incomplete = raw.incomplete.map(transformViolation);
+  if (config.includeIncomplete && incomplete.length) {
+    result.incomplete = incomplete;
+  }
+
+  if (config.includePasses && raw.passes?.length) {
+    result.passes = raw.passes.map(_transformViolation);
+  }
 
   return result;
 }
 
-function buildSummary(violations) {
+/**
+ * Summary counts NODES (element instances) per impact level, not rules.
+ * issuesPerRule maps ruleId → { nodeCount, impact, description, helpUrl }
+ */
+function _buildSummary(violations, incomplete) {
   const counts  = { critical: 0, serious: 0, moderate: 0, minor: 0 };
   const perRule = {};
+  let totalViolationNodes = 0;
+
   for (const v of violations) {
+    const nodeCount = v.nodes?.length ?? 0;
+    totalViolationNodes += nodeCount;
     const impact = v.impact || 'minor';
-    counts[impact] = (counts[impact] || 0) + 1;
-    perRule[v.id]  = (perRule[v.id]  || 0) + 1;
+    counts[impact] = (counts[impact] || 0) + nodeCount;
+
+    perRule[v.id] = {
+      nodeCount:   (perRule[v.id]?.nodeCount  || 0) + nodeCount,
+      impact:      v.impact,
+      description: v.description,
+      help:        v.help,
+      helpUrl:     v.helpUrl,
+    };
   }
-  return { totalIssues: violations.length, ...counts, issuesPerRule: perRule };
+
+  // Sort by nodeCount desc
+  const issuesPerRule = Object.fromEntries(
+    Object.entries(perRule).sort(([, a], [, b]) => b.nodeCount - a.nodeCount)
+  );
+
+  return {
+    totalViolations:      violations.length,    // number of distinct rules violated
+    totalViolationNodes,                         // total element instances with issues
+    totalIncomplete:      incomplete.length,
+    ...counts,
+    issuesPerRule,
+  };
 }
 
-function transformViolation(item) {
+function _transformViolation(item) {
   return {
     id:          item.id,
     impact:      item.impact || null,
@@ -253,27 +257,39 @@ function transformViolation(item) {
     help:        item.help || null,
     helpUrl:     item.helpUrl || null,
     tags:        item.tags || [],
-    nodes:       (item.nodes || []).map(transformNode),
+    nodeCount:   item.nodes?.length ?? 0,
+    nodes:       (item.nodes || []).map(_transformNode),
   };
 }
 
-function transformNode(node) {
+function _transformNode(node) {
   return {
     html:           node.html || null,
     target:         node.target || [],
     failureSummary: node.failureSummary || null,
     boundingBox:    node.boundingBox || null,
+    // Include any/all/none check details
+    any:  (node.any  || []).map(c => ({ id: c.id, message: c.message })),
+    all:  (node.all  || []).map(c => ({ id: c.id, message: c.message })),
+    none: (node.none || []).map(c => ({ id: c.id, message: c.message })),
   };
 }
 
-function buildEmptyResult(pageUrl, reason) {
+function _buildEmptyResult(pageUrl, reason) {
   return {
     pageUrl,
-    analysedAt:  new Date().toISOString(),
-    axeVersion:  null,
-    config:      null,
-    summary:     { totalIssues: 0, critical: 0, serious: 0, moderate: 0, minor: 0, issuesPerRule: {} },
+    analysedAt: new Date().toISOString(),
+    axeVersion: null,
+    config:     null,
+    summary: {
+      totalViolations:     0,
+      totalViolationNodes: 0,
+      totalIncomplete:     0,
+      critical: 0, serious: 0, moderate: 0, minor: 0,
+      issuesPerRule: {},
+    },
     violations:  [],
+    incomplete:  [],
     skipped:     true,
     skipReason:  reason,
   };

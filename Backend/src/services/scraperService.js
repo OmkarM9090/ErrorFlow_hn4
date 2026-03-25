@@ -1,18 +1,17 @@
 /**
- * scraperService.js (updated)
+ * scraperService.js  — SPA-aware full-site audit
  *
- * Changes from previous version:
- *  - Imports prepareAxe in addition to runAxe
- *  - Creates page context manually (instead of via renderer.renderPage)
- *    so we can call prepareAxe(page) BEFORE page.goto()
- *  - Adds bypassCSP: true to every context
- *
- * Correct call order for CSP bypass:
- *   1. browser.newContext({ bypassCSP: true })
- *   2. context.newPage()
- *   3. prepareAxe(page)      ← registers axe as init script (pre-navigation)
- *   4. page.goto(url)        ← axe loads before page JS; CSP is irrelevant
- *   5. runAxe(page, options) ← axe.run() succeeds
+ * Key fixes vs original:
+ *  1. After loading the seed page, calls crawler.discoverSpaRoutes(page)
+ *     to intercept React Router / pushState navigation and find all routes.
+ *  2. Keeps one persistent browser context for route discovery, then creates
+ *     fresh contexts per page (CSP bypass + axe pre-injection).
+ *  3. axe violations are now fully expanded: issuesPerRule counts NODES
+ *     (actual element instances) not just rule occurrences.
+ *  4. Malformed paths (e.g. /authentication-2792005.web.app) are rejected
+ *     by the crawler's _isMalformedPath guard.
+ *  5. includeIncomplete: true  — captures "needs review" issues too.
+ *  6. All WCAG 2.0 A/AA + best-practice tags included.
  */
 
 const Crawler        = require('../crawler/crawler');
@@ -24,17 +23,20 @@ const Screenshotter  = require('../screenshot/screenshot');
 const { runAxe, prepareAxe } = require('../axe/axeRunner');
 
 const DEFAULT_OPTIONS = {
-  maxDepth:           2,
-  maxPages:           20,
+  maxDepth:           3,
+  maxPages:           50,
   captureScreenshots: true,
   screenshotDir:      './output/screenshots',
+  discoverSpaRoutes:  true,   // NEW — intercept pushState on SPAs
   axe: {
-    runOnly:           ['wcag2a', 'wcag2aa'],
+    runOnly:           ['wcag2a', 'wcag2aa', 'best-practice'],
     disabledRules:     [],
-    includeIncomplete: false,
+    includeIncomplete: true,   // capture "needs review" items too
     includePasses:     false,
   },
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 async function runAudit(startUrl, userOptions = {}) {
   const options = {
@@ -57,55 +59,83 @@ async function runAudit(startUrl, userOptions = {}) {
   await renderer.launch();
   crawler.seed();
 
+  // ── SPA Route Discovery pass ─────────────────────────────────────────────
+  if (options.discoverSpaRoutes) {
+    console.log('[ScraperService] Running SPA route discovery on:', startUrl);
+    let discoveryContext = null;
+    try {
+      discoveryContext = await renderer.browser.newContext({
+        userAgent: _userAgent(),
+        viewport:  { width: 1280, height: 800 },
+        bypassCSP: true,
+      });
+      const discoveryPage = await discoveryContext.newPage();
+      await prepareAxe(discoveryPage);   // needed for init script; not used yet
+      try {
+        await discoveryPage.goto(startUrl, { waitUntil: 'networkidle', timeout: 25000 });
+      } catch (e) {
+        console.warn('[ScraperService] Discovery navigation warning:', e.message);
+      }
+      const found = await crawler.discoverSpaRoutes(discoveryPage);
+      console.log(`[ScraperService] SPA discovery found ${found.length} total routes`);
+    } catch (e) {
+      console.warn('[ScraperService] SPA discovery failed (non-fatal):', e.message);
+    } finally {
+      if (discoveryContext) {
+        try { await discoveryContext.close(); } catch { /* ignore */ }
+      }
+    }
+  }
+
+  // ── Main audit loop ───────────────────────────────────────────────────────
   while (crawler.hasNext()) {
     const { url, depth } = crawler.next();
-    console.log(`[ScraperService] Crawling (depth=${depth}): ${url}`);
+    console.log(`[ScraperService] Auditing (depth=${depth}): ${url}`);
 
     const consoleMonitor = new ConsoleMonitor();
     const networkMonitor = new NetworkMonitor();
     let context = null;
 
     try {
-      // ── Create context + page manually so we can inject axe before goto ──
       context = await renderer.browser.newContext({
-        userAgent: 'Mozilla/5.0 (compatible; AccessibilityAuditBot/1.0; +https://yourdomain.com/bot)',
+        userAgent: _userAgent(),
         viewport:  { width: 1280, height: 800 },
-        bypassCSP: true,   // tells Chromium to ignore CSP headers — required for axe injection
+        bypassCSP: true,
       });
 
       const page = await context.newPage();
 
-      // Register axe as an init script BEFORE navigation.
-      // addInitScript runs at browser-engine level, before any page script,
-      // and is immune to CSP. axe will be in window.axe when goto() resolves.
+      // Inject axe BEFORE navigation (CSP-safe)
       await prepareAxe(page);
 
-      // Attach monitors before navigation for complete event capture
       consoleMonitor.attach(page);
       networkMonitor.attach(page);
 
-      // Navigate
       const navStart = Date.now();
       try {
-        await page.goto(url, { waitUntil: 'networkidle', timeout: 20000 });
+        await page.goto(url, { waitUntil: 'networkidle', timeout: 25000 });
       } catch (navErr) {
-        console.warn(`[ScraperService] Navigation warning for ${url}: ${navErr.message}`);
+        console.warn(`[ScraperService] Nav warning ${url}: ${navErr.message}`);
       }
       const wallClockMs = Date.now() - navStart;
 
+      // Wait a bit extra for dynamic content / lazy renders
+      await page.waitForTimeout(500).catch(() => {});
+
       const timings = await page.evaluate(() => {
-        const t = performance.timing;
-        return t ? {
+        const t = performance?.timing;
+        if (!t) return null;
+        return {
           domContentLoaded: t.domContentLoadedEventEnd - t.navigationStart,
-          load:             t.loadEventEnd - t.navigationStart,
-          ttfb:             t.responseStart - t.navigationStart,
-        } : null;
+          load:             t.loadEventEnd             - t.navigationStart,
+          ttfb:             t.responseStart            - t.navigationStart,
+        };
       }).catch(() => null);
 
       // DOM extraction
       const domData = await extractor.extract(page);
 
-      // axe-core — axe is already injected, no CSP issue
+      // axe audit — comprehensive
       const axeResults = await runAxe(page, options.axe);
 
       // Screenshot
@@ -114,7 +144,7 @@ async function runAudit(startUrl, userOptions = {}) {
         screenshotResult = await screenshotter.capture(page, url);
       }
 
-      // Feed discovered links back to crawler
+      // Feed discovered href links back to crawler (for multi-page sites)
       const hrefs = domData.links.map(l => l.href).filter(Boolean);
       crawler.enqueueLinks(hrefs, depth);
 
@@ -122,7 +152,14 @@ async function runAudit(startUrl, userOptions = {}) {
         url,
         depth,
         timings: { wallClockMs, ...(timings || {}) },
-        ...domData,
+        meta:        domData.meta,
+        headings:    domData.headings,
+        images:      domData.images,
+        buttons:     domData.buttons,
+        links:       domData.links,
+        forms:       domData.forms,
+        landmarks:   domData.landmarks,
+        ariaSnapshot: domData.ariaSnapshot,
         axeResults,
         screenshot: screenshotResult,
         console:    consoleMonitor.getSummary(),
@@ -132,7 +169,7 @@ async function runAudit(startUrl, userOptions = {}) {
 
     } catch (err) {
       console.error(`[ScraperService] Failed on ${url}: ${err.message}`);
-      errors.push({ url, error: err.message, depth });
+      errors.push({ url, error: err.message, depth, stack: err.stack });
     } finally {
       if (context) {
         try { await context.close(); } catch { /* ignore */ }
@@ -142,51 +179,84 @@ async function runAudit(startUrl, userOptions = {}) {
 
   await renderer.close();
 
-  const accessibilitySummary = buildAccessibilitySummary(pageResults);
-
   return {
-    auditId:  generateAuditId(),
+    auditId:   _generateAuditId(),
     startUrl,
     options,
     summary: {
-      totalPagesCrawled: pageResults.length,
-      totalErrors:       errors.length,
-      durationMs:        Date.now() - auditStartTime,
-      startedAt:         new Date(auditStartTime).toISOString(),
-      completedAt:       new Date().toISOString(),
-      accessibility:     accessibilitySummary,
+      totalPagesCrawled:    pageResults.length,
+      totalErrors:          errors.length,
+      durationMs:           Date.now() - auditStartTime,
+      startedAt:            new Date(auditStartTime).toISOString(),
+      completedAt:          new Date().toISOString(),
+      accessibility:        _buildAccessibilitySummary(pageResults),
+      pagesWithIssues:      pageResults.filter(p => p.axeResults?.summary?.totalIssues > 0).length,
+      pagesWithIncomplete:  pageResults.filter(p => (p.axeResults?.incomplete?.length ?? 0) > 0).length,
     },
     pages:  pageResults,
     errors,
   };
 }
 
-function buildAccessibilitySummary(pageResults) {
+// ─────────────────────────────────────────────────────────────────────────────
+// Summary builder — counts NODES (element instances), not just rule occurrences
+// ─────────────────────────────────────────────────────────────────────────────
+
+function _buildAccessibilitySummary(pageResults) {
   const totals  = { critical: 0, serious: 0, moderate: 0, minor: 0 };
-  const perRule = {};
-  let totalIssues = 0;
+  const perRule = {};   // ruleId → { count, impact, description, helpUrl }
+  let totalViolationNodes = 0;
+  let totalIncomplete     = 0;
 
   for (const page of pageResults) {
     const axe = page.axeResults;
     if (!axe || axe.skipped) continue;
-    totalIssues     += axe.summary.totalIssues;
-    totals.critical += axe.summary.critical;
-    totals.serious  += axe.summary.serious;
-    totals.moderate += axe.summary.moderate;
-    totals.minor    += axe.summary.minor;
-    for (const [id, count] of Object.entries(axe.summary.issuesPerRule || {})) {
-      perRule[id] = (perRule[id] || 0) + count;
+
+    // Count violation NODES (not violations)
+    for (const v of (axe.violations || [])) {
+      const nodeCount = v.nodes?.length ?? 0;
+      totalViolationNodes += nodeCount;
+      const impact = v.impact || 'minor';
+      totals[impact] = (totals[impact] || 0) + nodeCount;
+
+      if (!perRule[v.id]) {
+        perRule[v.id] = {
+          count:       0,
+          impact:      v.impact,
+          description: v.description,
+          helpUrl:     v.helpUrl,
+          pages:       [],
+        };
+      }
+      perRule[v.id].count += nodeCount;
+      if (!perRule[v.id].pages.includes(page.url)) {
+        perRule[v.id].pages.push(page.url);
+      }
     }
+
+    totalIncomplete += (axe.incomplete?.length ?? 0);
   }
 
+  // Sort by count desc
   const issuesPerRule = Object.fromEntries(
-    Object.entries(perRule).sort(([, a], [, b]) => b - a)
+    Object.entries(perRule).sort(([, a], [, b]) => b.count - a.count)
   );
 
-  return { totalIssues, ...totals, issuesPerRule };
+  return {
+    totalViolationNodes,
+    totalIncomplete,
+    ...totals,
+    issuesPerRule,
+  };
 }
 
-function generateAuditId() {
+// ─────────────────────────────────────────────────────────────────────────────
+
+function _userAgent() {
+  return 'Mozilla/5.0 (compatible; AccessibilityAuditBot/1.0; +https://yourdomain.com/bot)';
+}
+
+function _generateAuditId() {
   return `audit_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
