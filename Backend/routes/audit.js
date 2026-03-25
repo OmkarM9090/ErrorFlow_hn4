@@ -23,6 +23,7 @@ const {
   saveSharedReport,
   getSharedReport,
 } = require('../src/services/reportExportService');
+const { generateAIInsights } = require('../controllers/insightsEngine');
 
 /**
  * POST /api/audit
@@ -191,6 +192,12 @@ router.get('/share/:shareId', (req, res) => {
 
   return res.status(200).json(shared);
 });
+
+/**
+ * POST /api/audit/insights
+ * Generates AI-powered accessibility insights from audit data using Gemini.
+ */
+router.post('/insights', generateAIInsights);
 
 /**
  * GET /api/audit/health

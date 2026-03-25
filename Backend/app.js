@@ -31,7 +31,7 @@ app.use(
 );
 
 // ── Middleware ──────────────────────────────────────────────────────────────
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // Basic request logger (replace with Winston/Pino in production)
 app.use((req, _res, next) => {
