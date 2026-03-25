@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger.js';
 import Navbar from '../components/landing/Navbar';
 import Hero from '../components/landing/Hero';
 import Features from '../components/landing/Features';
+// import AnalysisInput from '../components/landing/AnalysisInput';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,6 +22,7 @@ const LandingPage = ({ onOpenAuth }) => {
       <Navbar onOpenAuth={onOpenAuth} />
       <Hero onOpenAuth={onOpenAuth} />
       <Features />
+        {/* <AnalysisInput /> */}
       {/* Space for future sections like Browser Extension, Dashboard preview, etc. */}
       <div className="h-screen bg-slate-50 flex items-center justify-center">
         <h2 className="text-4xl font-bold text-slate-300">More Sections Coming...</h2>
