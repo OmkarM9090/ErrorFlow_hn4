@@ -2,14 +2,10 @@ class ConsoleMonitor {
   constructor() {
     this._logs = [];
     this._jsErrors = [];
-    this._attached = false;
   }
 
   attach(page) {
-    if (this._attached) return;
-    this._attached = true;
-
-    page.on("console", async (msg) => {
+    page.on('console', async (msg) => {
       let args = [];
 
       try {
@@ -22,30 +18,28 @@ class ConsoleMonitor {
             }
           })
         );
-      } catch {
-        args = [];
-      }
+      } catch {}
 
-      const location = typeof msg.location === "function" ? msg.location() : {};
+      const location = msg.location ? msg.location() : {};
 
       this._logs.push({
         type: msg.type(), // log, warn, error, info, debug
         text: msg.text(),
         args,
         location: {
-          url: location?.url || null,
-          lineNumber: location?.lineNumber ?? null,
-          columnNumber: location?.columnNumber ?? null,
+          url: location.url || null,
+          lineNumber: location.lineNumber ?? null,
+          columnNumber: location.columnNumber ?? null,
         },
         timestamp: new Date().toISOString(),
       });
     });
 
-    page.on("pageerror", (err) => {
+    page.on('pageerror', (err) => {
       this._jsErrors.push({
         type: "runtime",
-        message: err?.message || "Unknown page error",
-        stack: err?.stack || null,
+        message: err.message,
+        stack: err.stack || null,
         timestamp: new Date().toISOString(),
       });
     });
@@ -56,11 +50,11 @@ class ConsoleMonitor {
   }
 
   getErrors() {
-    return this._logs.filter((log) => log.type === "error");
+    return this._logs.filter(l => l.type === 'error');
   }
 
   getWarnings() {
-    return this._logs.filter((log) => log.type === "warning" || log.type === "warn");
+    return this._logs.filter(l => l.type === 'warning' || l.type === 'warn');
   }
 
   getJsErrors() {
@@ -77,12 +71,6 @@ class ConsoleMonitor {
       warnings: this.getWarnings(),
       jsErrors: this.getJsErrors(),
     };
-  }
-
-  reset() {
-    this._logs = [];
-    this._jsErrors = [];
-    this._attached = false;
   }
 }
 
