@@ -1,6 +1,24 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/$/, '');
+
+const AUTH_ACTIONS = {
+  signup: {
+    title: 'Create your account',
+    subtitle: 'Register with email and password to receive an OTP verification code.',
+    button: 'Create account',
+  },
+  verify: {
+    title: 'Verify your email',
+    subtitle: 'Enter the 6-digit OTP sent to your email to activate your account.',
+    button: 'Verify OTP',
+  },
+  login: {
+    title: 'Welcome back',
+    subtitle: 'Sign in securely and continue to your authenticated experience.',
+    button: 'Login securely',
+  },
+};
 
 const emptyForm = {
   email: '',
@@ -11,48 +29,9 @@ const emptyForm = {
 function AuthPage() {
   const [activeTab, setActiveTab] = useState('signup');
   const [form, setForm] = useState(emptyForm);
-  const [token, setToken] = useState(localStorage.getItem('authToken') || '');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('info');
-  const [backendStatus, setBackendStatus] = useState('checking');
-
-  const actions = useMemo(
-    () => ({
-      signup: {
-        title: 'Create account',
-        subtitle: 'Register with your email and get an OTP verification code.',
-        button: 'Sign up and send OTP',
-      },
-      verify: {
-        title: 'Verify OTP',
-        subtitle: 'Enter the 6-digit OTP sent to your email address.',
-        button: 'Verify account',
-      },
-      login: {
-        title: 'Secure login',
-        subtitle: 'Login after verification and receive a JWT token.',
-        button: 'Login',
-      },
-    }),
-    []
-  );
-
-  useEffect(() => {
-    const healthCheck = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/`, { method: 'GET' });
-        if (!response.ok) {
-          throw new Error('Backend is not responding correctly');
-        }
-        setBackendStatus('online');
-      } catch (error) {
-        setBackendStatus('offline');
-      }
-    };
-
-    healthCheck();
-  }, []);
 
   const showMessage = (type, text) => {
     setMessageType(type);
@@ -64,20 +43,19 @@ function AuthPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const callApi = async ({ path, method = 'POST', payload, jwtToken = '' }) => {
+  const callApi = async ({ path, payload }) => {
     let response;
 
     try {
       response = await fetch(`${API_BASE_URL}${path}`, {
-        method,
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}),
         },
-        ...(payload ? { body: JSON.stringify(payload) } : {}),
+        body: JSON.stringify(payload),
       });
     } catch (error) {
-      throw new Error('Cannot connect to backend. Start backend on port 5000 and check CORS/API URL.');
+      throw new Error('Cannot connect to backend. Start backend on port 5000 and check API URL.');
     }
 
     let data = {};
@@ -121,7 +99,7 @@ function AuthPage() {
       },
     });
 
-    showMessage('success', data.message || 'Signup completed. Check your email for OTP.');
+    showMessage('success', data.message || 'Account created. Check your email for OTP.');
     setActiveTab('verify');
   };
 
@@ -134,7 +112,7 @@ function AuthPage() {
       },
     });
 
-    showMessage('success', data.message || 'Email verified successfully. You can login now.');
+    showMessage('success', data.message || 'Email verified. You can login now.');
     setActiveTab('login');
   };
 
@@ -147,29 +125,11 @@ function AuthPage() {
       },
     });
 
-    setToken(data.token);
-    localStorage.setItem('authToken', data.token);
-    showMessage('success', data.message || 'Login successful. JWT token saved locally.');
-  };
-
-  const handleProtectedCheck = async () => {
-    try {
-      const data = await callApi({
-        path: '/api/auth/protected',
-        method: 'GET',
-        jwtToken: token,
-      });
-
-      showMessage('success', `Protected route success: ${data.message}`);
-    } catch (error) {
-      showMessage('error', error.message || 'Unable to access protected route');
+    if (data.token) {
+      localStorage.setItem('authToken', data.token);
     }
-  };
 
-  const clearSession = () => {
-    setToken('');
-    localStorage.removeItem('authToken');
-    showMessage('info', 'Local session token cleared.');
+    showMessage('success', data.message || 'Login successful.');
   };
 
   const submit = async (event) => {
@@ -194,8 +154,6 @@ function AuthPage() {
     }
   };
 
-  const tokenPreview = token ? `${token.slice(0, 18)}...${token.slice(-10)}` : 'No JWT token saved';
-
   const isSignup = activeTab === 'signup';
   const isVerify = activeTab === 'verify';
   const isLogin = activeTab === 'login';
@@ -205,27 +163,14 @@ function AuthPage() {
       <section className="auth-card">
         <aside className="auth-side">
           <p className="eyebrow">ErrorFlow Authentication</p>
-          <h1>{actions[activeTab].title}</h1>
-          <p className="sub-copy">{actions[activeTab].subtitle}</p>
-
-          <div className="status-rail">
-            <div className="badge-row">
-              <span className={`dot ${backendStatus}`} />
-              <span className="badge-text">
-                {backendStatus === 'online'
-                  ? 'Backend online'
-                  : backendStatus === 'offline'
-                    ? 'Backend offline'
-                    : 'Checking backend'}
-              </span>
-            </div>
-            <span className="api-label">API: {API_BASE_URL}</span>
-          </div>
+          <h1>{AUTH_ACTIONS[activeTab].title}</h1>
+          <p className="sub-copy">{AUTH_ACTIONS[activeTab].subtitle}</p>
 
           <ul className="feature-list">
-            <li>Email + password signup</li>
-            <li>OTP verification by email</li>
-            <li>JWT protected routes</li>
+            <li>Fast email and password registration</li>
+            <li>One-time password verification via email</li>
+            <li>Secure JWT authentication flow</li>
+            <li>Clean, guided sign-in experience</li>
           </ul>
         </aside>
 
@@ -300,25 +245,13 @@ function AuthPage() {
             )}
 
             <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? 'Please wait...' : actions[activeTab].button}
+              {loading ? 'Please wait...' : AUTH_ACTIONS[activeTab].button}
             </button>
           </form>
 
           {message && <p className={`status ${messageType}`}>{message}</p>}
 
-          <div className="token-tools">
-            <button type="button" className="secondary-btn" onClick={handleProtectedCheck} disabled={!token || loading}>
-              Test protected route
-            </button>
-            <button type="button" className="secondary-btn" onClick={clearSession} disabled={loading}>
-              Clear local token
-            </button>
-          </div>
-
-          <footer className="meta">
-            <span>{token ? 'JWT token saved in localStorage' : 'No JWT token saved'}</span>
-            <span className="token-preview">Token: {tokenPreview}</span>
-          </footer>
+          <p className="footer-note">API base: {API_BASE_URL}</p>
         </section>
       </section>
     </main>

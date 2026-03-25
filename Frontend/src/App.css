@@ -10,9 +10,9 @@
 }
 
 .auth-card {
-  width: min(940px, 96vw);
+  width: min(980px, 96vw);
   display: grid;
-  grid-template-columns: 1fr 1.25fr;
+  grid-template-columns: 1fr 1.3fr;
   background: rgba(255, 255, 255, 0.84);
   backdrop-filter: blur(9px);
   border: 1px solid rgba(22, 26, 33, 0.1);
@@ -23,7 +23,7 @@
 }
 
 .auth-side {
-  padding: 28px 24px;
+  padding: 34px 28px;
   background:
     linear-gradient(160deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.92)),
     radial-gradient(circle at 20% 14%, rgba(255, 170, 60, 0.2), transparent 35%);
@@ -49,75 +49,29 @@
 .sub-copy {
   margin: 0;
   color: #4f5f74;
-  font-size: 0.94rem;
-}
-
-.status-rail {
-  margin-top: 16px;
-  padding: 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(35, 49, 68, 0.1);
-  display: grid;
-  gap: 6px;
-}
-
-.badge-row {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  display: inline-block;
-}
-
-.dot.online {
-  background: #0f9a58;
-}
-
-.dot.offline {
-  background: #cf2f4b;
-}
-
-.dot.checking {
-  background: #b7801e;
-}
-
-.badge-text {
-  font-size: 0.86rem;
-  color: #2f4057;
-  font-weight: 700;
-}
-
-.api-label {
-  font-size: 0.8rem;
-  color: #5a6b83;
-  word-break: break-word;
+  font-size: 1rem;
+  max-width: 44ch;
 }
 
 .feature-list {
-  margin: 18px 0 0;
+  margin: 24px 0 0;
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
 .feature-list li {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: #32465f;
-  padding: 9px 11px;
+  padding: 10px 12px;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.75);
   border: 1px solid rgba(29, 42, 61, 0.1);
 }
 
 .auth-main {
-  padding: 28px;
+  padding: 32px;
 }
 
 .tabs {
@@ -226,39 +180,11 @@
   border: 1px solid #c6dbff;
 }
 
-.token-tools {
-  margin-top: 12px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-
-.secondary-btn {
-  border: 1px solid rgba(33, 42, 56, 0.2);
-  background: #ffffff;
-  color: #2f3d52;
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.secondary-btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.meta {
-  margin-top: 14px;
-  display: grid;
-  gap: 4px;
+.footer-note {
+  margin: 14px 0 0;
   font-size: 0.8rem;
   color: #5f6f84;
-}
-
-.token-preview {
-  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 @media (max-width: 640px) {
@@ -282,10 +208,6 @@
   }
 
   .tabs {
-    grid-template-columns: 1fr;
-  }
-
-  .token-tools {
     grid-template-columns: 1fr;
   }
 }
