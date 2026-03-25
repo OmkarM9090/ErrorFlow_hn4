@@ -5,7 +5,7 @@ import { Sparkles, Terminal, Fingerprint, ScanSearch, ShieldAlert, AlertOctagon,
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Hero = () => {
+const Hero = ({ onRunAudit }) => {
   const containerRef = useRef(null);
   const counterRef = useRef(null);
 
@@ -250,7 +250,11 @@ const Hero = () => {
         {/* --- ACT 6: FINAL CTA --- */}
         <div className="final-cta absolute bottom-[8vh] z-50 flex flex-col items-center gap-4 invisible">
           <span className="text-slate-500 font-mono text-sm tracking-widest uppercase font-bold">[ Scroll down for AI Remediation ]</span>
-          <button className="flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-indigo-600 transition-colors shadow-2xl hover:shadow-indigo-500/30 group">
+          <button
+            type="button"
+            onClick={onRunAudit}
+            className="flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-indigo-600 transition-colors shadow-2xl hover:shadow-indigo-500/30 group"
+          >
             Fix With AI <ArrowRight className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>

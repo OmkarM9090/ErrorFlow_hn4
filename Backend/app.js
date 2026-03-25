@@ -5,10 +5,25 @@ const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "http://localhost:5175",
+];
+
 // ── CORS Configuration ──────────────────────────────────────────────────────
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:3000"],
+    origin(origin, callback) {
+      // Allow non-browser clients and local frontend dev servers.
+      if (!origin) return callback(null, true);
+
+      const isAllowedOrigin =
+        allowedOrigins.includes(origin) || /^http:\/\/localhost:\d+$/.test(origin);
+
+      if (isAllowedOrigin) return callback(null, true);
+      return callback(new Error(`Not allowed by CORS: ${origin}`));
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],

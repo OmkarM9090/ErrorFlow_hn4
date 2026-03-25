@@ -11,7 +11,7 @@ import Footer from '../components/landing/Footer';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const LandingPage = ({ onOpenAuth }) => {
+const LandingPage = ({ onOpenAuth, onRunAudit }) => {
   // Smooth scroll setup (optional but recommended for GSAP)
   useLayoutEffect(() => {
     let ctx = gsap.context(() => {
@@ -23,7 +23,7 @@ const LandingPage = ({ onOpenAuth }) => {
   return (
     <main className="relative w-full">
       <Navbar onOpenAuth={onOpenAuth} />
-      <Hero onOpenAuth={onOpenAuth} />
+      <Hero onOpenAuth={onOpenAuth} onRunAudit={onRunAudit} />
       <Features />
       <HowItWorks />
       <ImpactSection />
