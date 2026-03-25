@@ -17,6 +17,12 @@ const express = require('express');
 const router = express.Router();
 const { runAudit } = require('../src/services/scraperService');
 const { isValidUrl } = require('../utils/routeValidation');
+const {
+  createPdfBuffer,
+  createExcelBuffer,
+  saveSharedReport,
+  getSharedReport,
+} = require('../src/services/reportExportService');
 
 /**
  * POST /api/audit
@@ -75,6 +81,115 @@ router.post('/', async (req, res) => {
       detail: err.message,
     });
   }
+});
+
+/**
+ * POST /api/audit/export/pdf
+ * Exports a normalized report payload as a PDF file.
+ */
+router.post('/export/pdf', async (req, res) => {
+  try {
+    const report = req.body?.report;
+    if (!report || typeof report !== 'object') {
+      return res.status(400).json({
+        error: 'Missing required field: report (object)',
+      });
+    }
+
+    const pdfBuffer = await createPdfBuffer(report);
+    const filename = `accessibility-report-${Date.now()}.pdf`;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    return res.status(200).send(pdfBuffer);
+  } catch (err) {
+    console.error('[Route /api/audit/export/pdf] Unhandled error:', err);
+    return res.status(500).json({
+      error: 'Unable to generate PDF report.',
+      detail: err.message,
+    });
+  }
+});
+
+/**
+ * POST /api/audit/export/excel
+ * Exports a normalized report payload as an XLSX file.
+ */
+router.post('/export/excel', async (req, res) => {
+  try {
+    const report = req.body?.report;
+    if (!report || typeof report !== 'object') {
+      return res.status(400).json({
+        error: 'Missing required field: report (object)',
+      });
+    }
+
+    const excelBuffer = await createExcelBuffer(report);
+    const filename = `accessibility-report-${Date.now()}.xlsx`;
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    return res.status(200).send(excelBuffer);
+  } catch (err) {
+    console.error('[Route /api/audit/export/excel] Unhandled error:', err);
+    return res.status(500).json({
+      error: 'Unable to generate Excel report.',
+      detail: err.message,
+    });
+  }
+});
+
+/**
+ * POST /api/audit/share
+ * Creates an expiring share ID for a report payload.
+ */
+router.post('/share', (req, res) => {
+  try {
+    const report = req.body?.report;
+    if (!report || typeof report !== 'object') {
+      return res.status(400).json({
+        error: 'Missing required field: report (object)',
+      });
+    }
+
+    const shared = saveSharedReport(report);
+    const frontendBaseUrl = (process.env.FRONTEND_BASE_URL || req.headers.origin || '').replace(/\/$/, '');
+    const shareUrl = frontendBaseUrl
+      ? `${frontendBaseUrl}/?sharedReport=${shared.shareId}`
+      : `/api/audit/share/${shared.shareId}`;
+
+    return res.status(201).json({
+      shareId: shared.shareId,
+      shareUrl,
+      expiresAt: new Date(shared.expiresAt).toISOString(),
+    });
+  } catch (err) {
+    console.error('[Route /api/audit/share] Unhandled error:', err);
+    return res.status(500).json({
+      error: 'Unable to create share link.',
+      detail: err.message,
+    });
+  }
+});
+
+/**
+ * GET /api/audit/share/:shareId
+ * Fetches a shared report by share ID.
+ */
+router.get('/share/:shareId', (req, res) => {
+  const { shareId } = req.params;
+  const shared = getSharedReport(shareId);
+
+  if (!shared) {
+    return res.status(404).json({
+      error: 'Shared report not found or expired.',
+    });
+  }
+
+  return res.status(200).json(shared);
 });
 
 /**

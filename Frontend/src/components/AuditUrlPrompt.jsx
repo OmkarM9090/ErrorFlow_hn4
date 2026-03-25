@@ -44,7 +44,7 @@ export default function AuditUrlPrompt({
   };
 
   return (
-    <div className={`w-full ${compact ? 'max-w-2xl' : 'max-w-3xl'} rounded-[2rem] border border-slate-200 bg-white p-6 md:p-8 shadow-[0_16px_50px_rgba(15,23,42,0.08)]`}>
+    <div className={`w-full ${compact ? 'max-w-2xl' : 'max-w-3xl'} mx-auto rounded-[2rem] border border-slate-200 bg-white p-6 md:p-8 shadow-[0_16px_50px_rgba(15,23,42,0.08)]`}>
       <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600">
         <Search size={14} />
         Target Scanner

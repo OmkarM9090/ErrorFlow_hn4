@@ -1,45 +1,16 @@
+// src/components/AccessibilityDashboard.jsx
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  PieChart,
-  Pie,
-  Cell,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  Radar,
-  AreaChart,
-  Area,
-  CartesianGrid,
+  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, 
+  RadarChart, PolarGrid, PolarAngleAxis, Radar, AreaChart, Area, CartesianGrid
 } from 'recharts';
-import {
-  Download,
-  Sparkles,
-  AlertTriangle,
-  Gauge,
-  Timer,
-  Boxes,
-  Globe,
-  Accessibility,
-  Brain,
-  Code2,
-  Activity,
-} from 'lucide-react';
+import { Download, Sparkles, AlertTriangle, Timer, Boxes, Globe, Accessibility, Brain, Code2, Activity } from 'lucide-react';
 
-const severityColors = {
-  critical: '#e11d48',
-  serious: '#f97316',
-  moderate: '#eab308',
-  minor: '#3b82f6',
-  pass: '#10b981',
-};
+// 🎯 YAHAN PAR HUMNE APNA LOGIC IMPORT KIYA HAI
+import { buildDashboardModel, ringColorByScore } from '../utils/dashboardLogic.js';
 
+// UI Tabs Configuration
 const tabs = [
   { key: 'overview', label: 'Overview' },
   { key: 'impact', label: 'User Impact' },
@@ -47,175 +18,6 @@ const tabs = [
   { key: 'performance', label: 'Performance' },
   { key: 'ai', label: 'AI Fixes' },
 ];
-
-const toNumber = (value, fallback = 0) => {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : fallback;
-};
-
-const cleanUrl = (url) => {
-  if (!url || typeof url !== 'string') return 'Unknown URL';
-  return url;
-};
-
-const ringColorByScore = (score) => {
-  if (score >= 90) return severityColors.pass;
-  if (score >= 75) return severityColors.minor;
-  if (score >= 60) return severityColors.moderate;
-  if (score >= 40) return severityColors.serious;
-  return severityColors.critical;
-};
-
-const scoreFromAxeSummary = (summary) => {
-  const critical = toNumber(summary?.critical);
-  const serious = toNumber(summary?.serious);
-  const moderate = toNumber(summary?.moderate);
-  const minor = toNumber(summary?.minor);
-
-  const penalty = critical * 12 + serious * 8 + moderate * 5 + minor * 2;
-  const score = Math.max(0, 100 - penalty);
-  return Math.min(100, Math.round(score));
-};
-
-const getPrimaryPage = (auditData) => {
-  if (Array.isArray(auditData?.pages) && auditData.pages.length > 0) {
-    return auditData.pages[0];
-  }
-  return {};
-};
-
-const buildDashboardModel = (auditData, simulateErrors) => {
-  const page = getPrimaryPage(auditData);
-  const summary = auditData?.summary || {};
-  const axeSummary = page?.axeResults?.summary || summary?.accessibility || {};
-
-  const headings = Array.isArray(page?.headings) ? page.headings : [];
-  const images = Array.isArray(page?.images) ? page.images : [];
-  const buttons = Array.isArray(page?.buttons) ? page.buttons : [];
-  const links = Array.isArray(page?.links) ? page.links : [];
-
-  const h1 = headings.filter((h) => toNumber(h?.level) === 1).length;
-  const h2 = headings.filter((h) => toNumber(h?.level) === 2).length;
-  const h3 = headings.filter((h) => toNumber(h?.level) === 3).length;
-
-  const baseCritical = toNumber(axeSummary?.critical);
-  const baseSerious = toNumber(axeSummary?.serious);
-  const baseModerate = toNumber(axeSummary?.moderate);
-  const baseMinor = toNumber(axeSummary?.minor);
-
-  const critical = simulateErrors ? Math.max(baseCritical, 4) : baseCritical;
-  const serious = simulateErrors ? Math.max(baseSerious, 7) : baseSerious;
-  const moderate = simulateErrors ? Math.max(baseModerate, 9) : baseModerate;
-  const minor = simulateErrors ? Math.max(baseMinor, 12) : baseMinor;
-
-  const computedScore = simulateErrors
-    ? 72
-    : scoreFromAxeSummary({ critical, serious, moderate, minor });
-
-  const totalErrors = simulateErrors
-    ? Math.max(toNumber(summary?.totalErrors), 8)
-    : toNumber(summary?.totalErrors);
-
-  const domContentLoaded = toNumber(page?.timings?.domContentLoaded, 0);
-  const ttfb = toNumber(page?.timings?.ttfb, 0);
-  const load = toNumber(page?.timings?.load, domContentLoaded);
-
-  const totalElementsScanned = headings.length + images.length + buttons.length + links.length;
-
-  const severityData = [
-    { name: 'Critical', value: critical, color: severityColors.critical },
-    { name: 'Serious', value: serious, color: severityColors.serious },
-    { name: 'Moderate', value: moderate, color: severityColors.moderate },
-    { name: 'Minor', value: minor, color: severityColors.minor },
-  ];
-
-  const pourData = [
-    {
-      dimension: 'Perceivable',
-      score: Math.max(0, 100 - critical * 8 - serious * 3),
-    },
-    {
-      dimension: 'Operable',
-      score: Math.max(0, 100 - serious * 5 - moderate * 2),
-    },
-    {
-      dimension: 'Understandable',
-      score: Math.max(0, 100 - moderate * 4 - minor * 2),
-    },
-    {
-      dimension: 'Robust',
-      score: Math.max(0, 100 - critical * 3 - minor * 2),
-    },
-  ];
-
-  const impactMatrix = [
-    {
-      label: 'Visual',
-      value: Math.max(0, Math.min(100, 100 - critical * 11 - serious * 4)),
-      color: '#e11d48',
-    },
-    {
-      label: 'Motor',
-      value: Math.max(0, Math.min(100, 100 - serious * 7 - moderate * 3)),
-      color: '#f97316',
-    },
-    {
-      label: 'Cognitive',
-      value: Math.max(0, Math.min(100, 100 - moderate * 6 - minor * 2)),
-      color: '#eab308',
-    },
-    {
-      label: 'Auditory',
-      value: Math.max(0, Math.min(100, 100 - minor * 2)),
-      color: '#3b82f6',
-    },
-  ];
-
-  const elementDistribution = [
-    { name: 'Images', value: images.length, color: '#4f46e5' },
-    { name: 'Buttons', value: buttons.length, color: '#06b6d4' },
-    { name: 'Links', value: links.length, color: '#f59e0b' },
-  ];
-
-  const headingHierarchy = [
-    { level: 'H1', count: h1 },
-    { level: 'H2', count: h2 },
-    { level: 'H3', count: h3 },
-  ];
-
-  const perfTimeline = [
-    { stage: 'TTFB', value: ttfb || 0 },
-    { stage: 'DOM Ready', value: domContentLoaded || ttfb || 0 },
-    { stage: 'Full Load', value: Math.max(load || 0, domContentLoaded || 0) },
-  ];
-
-  const firstImage = images[0];
-  const empathyMessages = [
-    `Blind users may miss context from ${images.filter((img) => img?.altMissing || img?.altEmpty).length} image(s) without usable alt text.`,
-    `Keyboard-only users may struggle with ${buttons.filter((btn) => btn?.hasNoAccessibleName).length} unlabeled interactive control(s).`,
-    `Screen-reader users may lose page structure if heading order is inconsistent across ${headings.length} heading node(s).`,
-  ];
-
-  const codeDiffOriginal = `<img src=\"${firstImage?.src || 'profile.jpg'}\">\n<button></button>\n<a href=\"/contact\"></a>`;
-  const codeDiffSuggested = `<img src=\"${firstImage?.src || 'profile.jpg'}\" alt=\"Team profile\">\n<button aria-label=\"Open menu\">Menu</button>\n<a href=\"/contact\" aria-label=\"Contact support\">Contact</a>`;
-
-  return {
-    url: cleanUrl(auditData?.startUrl || page?.url),
-    score: computedScore,
-    totalErrors,
-    domContentLoaded,
-    totalElementsScanned,
-    severityData,
-    pourData,
-    impactMatrix,
-    elementDistribution,
-    headingHierarchy,
-    perfTimeline,
-    empathyMessages,
-    codeDiffOriginal,
-    codeDiffSuggested,
-  };
-};
 
 const TabPanel = ({ tabKey, activeTab, children }) => (
   <AnimatePresence mode="wait">
@@ -250,6 +52,7 @@ export default function AccessibilityDashboard({ auditData }) {
   const [simulateErrors, setSimulateErrors] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
+  // 🎯 YAHAN PAR IMPORT KIYA HUA LOGIC CALL HO RAHA HAI
   const model = useMemo(
     () => buildDashboardModel(auditData || {}, simulateErrors),
     [auditData, simulateErrors]
@@ -258,6 +61,29 @@ export default function AccessibilityDashboard({ auditData }) {
   const scoreColor = ringColorByScore(model.score);
   const circumference = 2 * Math.PI * 66;
   const strokeDashoffset = circumference * (1 - model.score / 100);
+
+  const handleExportPdf = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/audit/export/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ report: auditData })
+      });
+      if (!response.ok) throw new Error("Failed to export");
+      
+      const blob = await response.blob();
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `accessibility-report.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to export PDF");
+    }
+  };
 
   return (
     <section className="relative min-h-screen overflow-x-hidden bg-[#fafafa] px-4 py-8 md:px-8">
@@ -304,10 +130,11 @@ export default function AccessibilityDashboard({ auditData }) {
 
               <button
                 type="button"
+                onClick={handleExportPdf}
                 className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20"
               >
                 <Download size={16} />
-                Export AI Report
+                Export PDF Report
               </button>
             </div>
           </div>
@@ -330,6 +157,7 @@ export default function AccessibilityDashboard({ auditData }) {
                   strokeLinecap="round"
                   strokeDasharray={circumference}
                   strokeDashoffset={strokeDashoffset}
+                  style={{ transition: "stroke-dashoffset 1s ease-in-out" }}
                 />
               </svg>
               <div className="absolute text-center">
@@ -423,7 +251,7 @@ export default function AccessibilityDashboard({ auditData }) {
                     </div>
                     <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
                       <div
-                        className="h-full rounded-full"
+                        className="h-full rounded-full transition-all duration-1000"
                         style={{ width: `${row.value}%`, backgroundColor: row.color }}
                       />
                     </div>
