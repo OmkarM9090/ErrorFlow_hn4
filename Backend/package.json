@@ -1,20 +1,21 @@
 {
-  "name": "backend",
+  "name": "accessibility-audit-platform",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Web Accessibility Audit Platform — Node.js scraper backend",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "nodemon server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "cors": "^2.8.6",
-    "dotenv": "^17.3.1",
-    "express": "^5.2.1",
-    "mongoose": "^9.3.2",
-    "puppeteer": "^24.40.0"
+    "express": "^4.18.2",
+    "playwright": "^1.44.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
