@@ -1,7 +1,8 @@
-import Homepage from './components/homepage.jsx'
+import AuthPage from './components/AuthPage.jsx'
+import './App.css'
 
 function App() {
-  return <Homepage />
+  return <AuthPage />
 }
 
 export default App
