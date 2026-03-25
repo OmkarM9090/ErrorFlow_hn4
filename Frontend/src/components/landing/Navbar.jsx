@@ -22,7 +22,7 @@ const Navbar = ({ onOpenAuth }) => {
         <div className="hidden md:flex items-center gap-8 font-medium text-slate-600">
           <a href="#features" className="hover:text-indigo-600 transition-colors">Features</a>
           <a href="#how-it-works" className="hover:text-indigo-600 transition-colors">How it Works</a>
-          <a href="#extension" className="hover:text-indigo-600 transition-colors">Extension</a>
+          <a href="#extension" className="hover:text-indigo-600 transition-colors">Impact</a>
         </div>
 
         <motion.button 
