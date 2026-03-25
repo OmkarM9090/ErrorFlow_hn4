@@ -2,18 +2,22 @@
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, 
+  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell,
   RadarChart, PolarGrid, PolarAngleAxis, Radar, AreaChart, Area, CartesianGrid
 } from 'recharts';
-import { Download, Sparkles, AlertTriangle, Timer, Boxes, Globe, Accessibility, Brain, Code2, Activity } from 'lucide-react';
+import { Download, Sparkles, AlertTriangle, Timer, Boxes, Globe, Accessibility, Brain, Code2, Activity, Eye } from 'lucide-react';
+import InsightsPanel from './InsightsPanel';
+import VisualPreview from './VisualPreview';
 
-// 🎯 YAHAN PAR HUMNE APNA LOGIC IMPORT KIYA HAI
 import { buildDashboardModel, ringColorByScore } from '../utils/dashboardLogic.js';
+
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000').replace(/\/$/, '');
 
 // UI Tabs Configuration
 const tabs = [
   { key: 'overview', label: 'Overview' },
   { key: 'impact', label: 'User Impact' },
+  { key: 'preview', label: 'Visual Preview' },
   { key: 'dom', label: 'DOM Visuals' },
   { key: 'performance', label: 'Performance' },
   { key: 'ai', label: 'AI Fixes' },
@@ -51,6 +55,9 @@ const MetricCard = ({ icon: Icon, label, value, suffix = '' }) => (
 export default function AccessibilityDashboard({ auditData }) {
   const [simulateErrors, setSimulateErrors] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
+  const [aiInsights, setAiInsights] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
 
   // 🎯 YAHAN PAR IMPORT KIYA HUA LOGIC CALL HO RAHA HAI
   const model = useMemo(
@@ -62,15 +69,38 @@ export default function AccessibilityDashboard({ auditData }) {
   const circumference = 2 * Math.PI * 66;
   const strokeDashoffset = circumference * (1 - model.score / 100);
 
+  const handleGenerateInsights = async () => {
+    setAiLoading(true);
+    setAiError('');
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/audit/insights`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ auditData }),
+      });
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.message || `Request failed (${response.status})`);
+      }
+      const data = await response.json();
+      setAiInsights(data);
+    } catch (err) {
+      console.error('[AI Insights]', err);
+      setAiError(err.message || 'Failed to generate AI insights.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   const handleExportPdf = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/audit/export/pdf', {
+      const response = await fetch(`${API_BASE_URL}/api/audit/export/pdf`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ report: auditData })
       });
       if (!response.ok) throw new Error("Failed to export");
-      
+
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -118,11 +148,10 @@ export default function AccessibilityDashboard({ auditData }) {
               <button
                 type="button"
                 onClick={() => setSimulateErrors((prev) => !prev)}
-                className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-2 text-sm font-semibold transition ${
-                  simulateErrors
-                    ? 'border-rose-200 bg-rose-500 text-white'
-                    : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
-                }`}
+                className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-2 text-sm font-semibold transition ${simulateErrors
+                  ? 'border-rose-200 bg-rose-500 text-white'
+                  : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+                  }`}
               >
                 <AlertTriangle size={16} />
                 Simulate Errors
@@ -182,11 +211,10 @@ export default function AccessibilityDashboard({ auditData }) {
                     key={tab.key}
                     type="button"
                     onClick={() => setActiveTab(tab.key)}
-                    className={`relative rounded-xl px-4 py-2 text-sm font-semibold transition ${
-                      isActive
-                        ? 'text-indigo-600'
-                        : 'text-slate-600 hover:text-slate-900'
-                    }`}
+                    className={`relative rounded-xl px-4 py-2 text-sm font-semibold transition ${isActive
+                      ? 'text-indigo-600'
+                      : 'text-slate-600 hover:text-slate-900'
+                      }`}
                   >
                     {tab.label}
                     {isActive ? (
@@ -276,6 +304,10 @@ export default function AccessibilityDashboard({ auditData }) {
           </div>
         </TabPanel>
 
+        <TabPanel tabKey="preview" activeTab={activeTab}>
+          <VisualPreview auditData={auditData} />
+        </TabPanel>
+
         <TabPanel tabKey="dom" activeTab={activeTab}>
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div className="h-[360px] rounded-[2rem] border border-slate-100 bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
@@ -339,27 +371,13 @@ export default function AccessibilityDashboard({ auditData }) {
         </TabPanel>
 
         <TabPanel tabKey="ai" activeTab={activeTab}>
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <div className="rounded-[2rem] border border-slate-800 bg-[#0b1220] p-5 shadow-[0_8px_30px_rgb(0,0,0,0.28)]">
-              <h3 className="mb-4 inline-flex items-center gap-2 font-serif text-2xl text-white">
-                <Code2 size={22} className="text-rose-300" />
-                Original Code (Detected)
-              </h3>
-              <pre className="overflow-auto rounded-xl bg-[#020617] p-4 text-sm text-rose-200">
-                <code>{model.codeDiffOriginal}</code>
-              </pre>
-            </div>
-
-            <div className="rounded-[2rem] border border-slate-800 bg-[#0b1220] p-5 shadow-[0_8px_30px_rgb(0,0,0,0.28)]">
-              <h3 className="mb-4 inline-flex items-center gap-2 font-serif text-2xl text-white">
-                <Globe size={22} className="text-emerald-300" />
-                AI Suggested Fix
-              </h3>
-              <pre className="overflow-auto rounded-xl bg-[#020617] p-4 text-sm text-emerald-200">
-                <code>{model.codeDiffSuggested}</code>
-              </pre>
-            </div>
-          </div>
+          <InsightsPanel
+            insights={aiInsights}
+            loading={aiLoading}
+            error={aiError}
+            onGenerate={handleGenerateInsights}
+            hasAuditData={!!auditData}
+          />
         </TabPanel>
       </div>
     </section>

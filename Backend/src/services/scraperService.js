@@ -21,6 +21,9 @@ const ConsoleMonitor = require('../monitors/consoleMonitor');
 const NetworkMonitor = require('../monitors/networkMonitor');
 const Screenshotter  = require('../screenshot/screenshot');
 const { runAxe, prepareAxe } = require('../axe/axeRunner');
+const { slugifyUrl }  = require('../../utils/urlUtils');
+const fs   = require('fs');
+const path = require('path');
 
 const DEFAULT_OPTIONS = {
   maxDepth:           3,
@@ -105,6 +108,41 @@ async function runAudit(startUrl, userOptions = {}) {
 
       const page = await context.newPage();
 
+      // ── Network interception: save CSS & JS assets ──────────────────────
+      const assetDir = path.resolve('./output/assets');
+      fs.mkdirSync(assetDir, { recursive: true });
+
+      page.on('response', async (response) => {
+        try {
+          const resourceType = response.request().resourceType();
+          if (resourceType === 'stylesheet' || resourceType === 'script') {
+            const reqUrl = response.url();
+            const ext = resourceType === 'stylesheet' ? '.css' : '.js';
+            // Extract a safe filename from the URL
+            let filename;
+            try {
+              const parsed = new URL(reqUrl);
+              filename = parsed.pathname.split('/').pop() || `asset_${Date.now()}`;
+            } catch {
+              filename = `asset_${Date.now()}`;
+            }
+            // Ensure extension
+            if (!filename.endsWith(ext)) filename += ext;
+            // Deduplicate with timestamp suffix
+            const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, '_');
+            const assetPath = path.join(assetDir, safeName);
+            // Only save if file doesn't already exist (avoid duplicates across pages)
+            if (!fs.existsSync(assetPath)) {
+              const body = await response.body();
+              fs.writeFileSync(assetPath, body);
+              console.log(`[AssetSaver] Saved ${resourceType}: ${safeName}`);
+            }
+          }
+        } catch {
+          // Silently ignore CORS errors, aborted requests, etc.
+        }
+      });
+
       // Inject axe BEFORE navigation (CSP-safe)
       await prepareAxe(page);
 
@@ -144,6 +182,20 @@ async function runAudit(startUrl, userOptions = {}) {
         screenshotResult = await screenshotter.capture(page, url);
       }
 
+      // ── Save full HTML ─────────────────────────────────────────────────
+      let htmlPath = null;
+      try {
+        const htmlDir = path.resolve('./output/html');
+        fs.mkdirSync(htmlDir, { recursive: true });
+        const htmlFilename = `${slugifyUrl(url)}.html`;
+        htmlPath = path.join(htmlDir, htmlFilename);
+        const htmlContent = await page.content();
+        fs.writeFileSync(htmlPath, htmlContent, 'utf-8');
+        console.log(`[HTMLSaver] Saved: ${htmlFilename}`);
+      } catch (htmlErr) {
+        console.warn(`[HTMLSaver] Failed for ${url}: ${htmlErr.message}`);
+      }
+
       // Feed discovered href links back to crawler (for multi-page sites)
       const hrefs = domData.links.map(l => l.href).filter(Boolean);
       crawler.enqueueLinks(hrefs, depth);
@@ -162,6 +214,7 @@ async function runAudit(startUrl, userOptions = {}) {
         ariaSnapshot: domData.ariaSnapshot,
         axeResults,
         screenshot: screenshotResult,
+        htmlPath,
         console:    consoleMonitor.getSummary(),
         network:    networkMonitor.getSummary(),
         crawledAt:  new Date().toISOString(),
@@ -179,8 +232,10 @@ async function runAudit(startUrl, userOptions = {}) {
 
   await renderer.close();
 
-  return {
-    auditId:   _generateAuditId(),
+  // ── Save final JSON report ──────────────────────────────────────────────
+  const auditId = _generateAuditId();
+  const report = {
+    auditId,
     startUrl,
     options,
     summary: {
@@ -196,6 +251,18 @@ async function runAudit(startUrl, userOptions = {}) {
     pages:  pageResults,
     errors,
   };
+
+  try {
+    const reportsDir = path.resolve('./output/reports');
+    fs.mkdirSync(reportsDir, { recursive: true });
+    const reportPath = path.join(reportsDir, `${auditId}.json`);
+    fs.writeFileSync(reportPath, JSON.stringify(report, null, 2), 'utf-8');
+    console.log(`[ReportSaver] Saved audit report: ${auditId}.json`);
+  } catch (reportErr) {
+    console.warn(`[ReportSaver] Failed to save report: ${reportErr.message}`);
+  }
+
+  return report;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
