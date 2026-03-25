@@ -1,0 +1,2678 @@
+{
+  "auditId": "audit_1774475280324_pmls38",
+  "startUrl": "https://portfolio-50590.web.app/",
+  "options": {
+    "maxDepth": 2,
+    "maxPages": 20,
+    "captureScreenshots": true,
+    "screenshotDir": "./output/screenshots",
+    "discoverSpaRoutes": true,
+    "axe": {
+      "runOnly": [
+        "wcag2a",
+        "wcag2aa",
+        "best-practice"
+      ],
+      "disabledRules": [],
+      "includeIncomplete": true,
+      "includePasses": false
+    }
+  },
+  "summary": {
+    "totalPagesCrawled": 1,
+    "totalErrors": 0,
+    "durationMs": 15312,
+    "startedAt": "2026-03-25T21:47:45.012Z",
+    "completedAt": "2026-03-25T21:48:00.324Z",
+    "accessibility": {
+      "totalViolationNodes": 57,
+      "totalIncomplete": 1,
+      "critical": 4,
+      "serious": 6,
+      "moderate": 47,
+      "minor": 0,
+      "issuesPerRule": {
+        "region": {
+          "count": 45,
+          "impact": "moderate",
+          "description": "Ensure all page content is contained by landmarks",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/region?application=axeAPI",
+          "pages": [
+            "https://portfolio-50590.web.app/"
+          ]
+        },
+        "button-name": {
+          "count": 4,
+          "impact": "critical",
+          "description": "Ensure buttons have discernible text",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/button-name?application=axeAPI",
+          "pages": [
+            "https://portfolio-50590.web.app/"
+          ]
+        },
+        "color-contrast": {
+          "count": 3,
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=axeAPI",
+          "pages": [
+            "https://portfolio-50590.web.app/"
+          ]
+        },
+        "link-name": {
+          "count": 3,
+          "impact": "serious",
+          "description": "Ensure links have discernible text",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/link-name?application=axeAPI",
+          "pages": [
+            "https://portfolio-50590.web.app/"
+          ]
+        },
+        "heading-order": {
+          "count": 1,
+          "impact": "moderate",
+          "description": "Ensure the order of headings is semantically correct",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/heading-order?application=axeAPI",
+          "pages": [
+            "https://portfolio-50590.web.app/"
+          ]
+        },
+        "landmark-one-main": {
+          "count": 1,
+          "impact": "moderate",
+          "description": "Ensure the document has a main landmark",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/landmark-one-main?application=axeAPI",
+          "pages": [
+            "https://portfolio-50590.web.app/"
+          ]
+        }
+      }
+    },
+    "pagesWithIssues": 0,
+    "pagesWithIncomplete": 1
+  },
+  "pages": [
+    {
+      "url": "https://portfolio-50590.web.app/",
+      "depth": 0,
+      "timings": {
+        "wallClockMs": 2661,
+        "domContentLoaded": 301,
+        "load": 304,
+        "ttfb": 20
+      },
+      "meta": {
+        "title": "Omkar Mahadik",
+        "description": null,
+        "lang": "en",
+        "charset": "UTF-8",
+        "viewport": "width=device-width, initial-scale=1.0"
+      },
+      "headings": [
+        {
+          "level": 1,
+          "text": "Omkar Mahadik",
+          "id": null
+        },
+        {
+          "level": 1,
+          "text": "Hello 👋, Welcome to my portfolio.",
+          "id": null
+        },
+        {
+          "level": 1,
+          "text": "I am Omkar",
+          "id": null
+        },
+        {
+          "level": 2,
+          "text": "INTRODUCTION",
+          "id": "one"
+        },
+        {
+          "level": 1,
+          "text": "Overview",
+          "id": null
+        },
+        {
+          "level": 3,
+          "text": "Web Developer",
+          "id": null
+        },
+        {
+          "level": 3,
+          "text": "Java Developer",
+          "id": null
+        },
+        {
+          "level": 3,
+          "text": "DSA Problem Solving",
+          "id": null
+        },
+        {
+          "level": 3,
+          "text": "Backend & Frontend Developer",
+          "id": null
+        },
+        {
+          "level": 3,
+          "text": "SO FAR",
+          "id": "ed"
+        },
+        {
+          "level": 1,
+          "text": "Education",
+          "id": "ed1"
+        },
+        {
+          "level": 2,
+          "text": "Watumall Institute Of Technology And Engineering",
+          "id": null
+        },
+        {
+          "level": 3,
+          "text": "B.E. In Comp Engg",
+          "id": null
+        },
+        {
+          "level": 2,
+          "text": "K.V. Pendharkar College of Science Commerce and Arts",
+          "id": null
+        },
+        {
+          "level": 3,
+          "text": "11-12th Sci HSC",
+          "id": null
+        },
+        {
+          "level": 2,
+          "text": "Tilak NAgar Vidya Mandir",
+          "id": null
+        },
+        {
+          "level": 3,
+          "text": "1-10th SSC",
+          "id": null
+        },
+        {
+          "level": 2,
+          "text": "My Knowledge of",
+          "id": "head1"
+        },
+        {
+          "level": 1,
+          "text": "Technology",
+          "id": "head2"
+        },
+        {
+          "level": 2,
+          "text": "MY Work",
+          "id": "hed1"
+        },
+        {
+          "level": 1,
+          "text": "My Projects",
+          "id": "hed2"
+        },
+        {
+          "level": 2,
+          "text": "Contact Us",
+          "id": null
+        },
+        {
+          "level": 2,
+          "text": "I am grateful for any contact or message that you can send me through my Email, LinkedIn, Github, Instagram, or the form Above.",
+          "id": null
+        }
+      ],
+      "images": [
+        {
+          "src": "https://pngfre.com/wp-content/uploads/oggy-1.png",
+          "alt": "Oggy",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 736,
+          "height": 736
+        },
+        {
+          "src": "https://static.vecteezy.com/system/resources/previews/008/470/778/non_2x/3d-render-basic-shape-ico-sphere-primitive-icon-illustration-with-glossy-finish-element-free-png.png",
+          "alt": "3D Sphere",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 980,
+          "height": 980
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/html-BlhLRGzY.png",
+          "alt": "HTML 5",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 240,
+          "height": 240
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/csslogo-DlZE0Yf0.png",
+          "alt": "CSS 5",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 240,
+          "height": 240
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/javalogo-CDOwdzco.png",
+          "alt": "Java",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 480,
+          "height": 480
+        },
+        {
+          "src": "data:image/png;base64,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",
+          "alt": "Javascript",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 240,
+          "height": 240
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/clogo-CyjaNlSE.png",
+          "alt": "C Programming",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 695,
+          "height": 768
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/pythonlogo-DXrjnlgy.png",
+          "alt": "Python",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 1024,
+          "height": 1024
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/socketiologo-DoBAArfZ.png",
+          "alt": "Socket.io",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 1200,
+          "height": 1200
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/reactjslogo-LYxsbuPE.png",
+          "alt": "React",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 96,
+          "height": 96
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/expresslogo-BoOPpEVH.png",
+          "alt": "Express.js",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 465,
+          "height": 141
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/nodejslogo-BctxLIqp.png",
+          "alt": "Node.js",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 240,
+          "height": 240
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/mysqllogo-Czp3-ZJ0.png",
+          "alt": "MySQL",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 300,
+          "height": 300
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/mongologo-BMjJsDtp.png",
+          "alt": "MongoDB",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 512,
+          "height": 512
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/firebaselogo-DT3Eeqa3.png",
+          "alt": "Firebase",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 219,
+          "height": 300
+        },
+        {
+          "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAADwCAYAAAA+VemSAAAACXBIWXMAAAsTAAALEwEAmpwYAAANG0lEQVR4nO2dX6xcRR2AD9QYgpYElEDv3fltqdUSHtSISNWIiIE09vbuzMKa+GBq4p/4hoIGEx/qSxOiL1T62Adj4kN90gegSXnQxAdCIiYkloQKSKKQpo3c7szeikrXzPZCW3r39uzdc2bOzPm+5Jc0t7t7dn4z386cc+bMFAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQFs415cdVqtHrJZjzqgTToudhFEn/N/8//nXxP6eAHAJIy13Oi3HnZFxqdBy3L+HJAJEZLy/e5016og1cr60vGvh3+Pf6z+DSgQIzGhZLVgjz80q7hUia/XC6mCHUIEAgfDCWS2vzCvvJRK/zrkxQILyIjFA4vIiMUDi8iIxQOLyIjFA4vIiMUDi8iIxQOLyIjFA4vIiMUDi8iIxQOLyIjFA4vIiMUDi8iIxQOLyIjFA4vIiMbSe1OVFYmgtuciLxNBKnJE/xJaucomNeu1cr7s9dm4Baie3HpieGFoHEgMkDhIDJA4SAyQOEgMkDhIDNASn5YDV8vis70NigMg4LT++eFsFibnFBMngjPzoynujSIzE0Hhsv/vo9AkOSIzE0Fj8vrtXn6WExEgMjcMa9cPyUw2RGImhMVijfjD7fGEkRmKIjtXq4c1P+kdiJIZojLR8z+9wP9+TO0iMxBAcp+W788qLxDyKCBFwRr5TlbxIjMQQENeTb1st71QpLxIjMSQ2bJ4qsVE/m/V7+SVs/FI2l/8YqDeslmecVof9ebYPp9Uhq9VTTqtTdZahwlywPA80v+etSmJn5EVn5Aln5DPjorhm2mvHB4prR8uLd1stB61Wb8YWFYmhVlxPfSuUvPNcnd4M46Vt1zsjjzmj3oot6/RcqNfP9WVHiHxAZjit9oeWN7TEntGgs2i1PB9bViSGynB9+WYseecZTs/ZGx+NLesGueCcGMphtfq6NfLfRjTcgD3xeFBssUY9HbvM03PBcBqugjUyaIq8MSRe2Ss3Oi0vxy4zEsPMDI081DR5Y0g87KkvxS4vEkOyw+ZpMdTdfqhqndxHbkCZp/6gcU4MKfS8lzTYf9t9t90SqtZGpnNX7DIjMVwV36tZrf7T/MYqvwtdnc7IycbnRXNhq7WMTNekIK+PkVbfD50fp9UvY5e73I+b4hZT2xhp1bNavR278ZUWeHnx7tA5clqWYpcbieEKRj21LyV5fQwHt94cuipX9nV2xi43EsNlONPZY7U6F7uxzRrjwR0fDF2Vp5d3bY1d7pkl1pwTZ4vrd7/mr+bGbmSbEnhp2/Wh8+VnZsUu96YkNpwTZ4fT6oEUe953Y7W3oELn7MyenTfELvemJdb0xNmQurwTgXX386Hz5h/ji13uuSQ29MTJY42632pZjd2Y5m6MWj0S42Jf7HIjcYuxPflqDvJeEFh+Hzx/Wv0idrmRuKXYfvcr1sgoduOpTmD1dsiplH5ZnhRmYrmy+WM4nQ621703J3nfC61+GvJ2W/TyInH7GPbli06Ljd1Y6gl11hnZFiKPq4MdYrW8Er/M1Ybl6nRzmTzHmq28a6HVb0Llc70la3MIy3C6eZztyRecUcPYjSNIA9Tq4VB5pSeG2mmTvBcElv9Z3flGqKZFTwy1MTLd3WvnhtHFCiqx3yVCq59stIh7lSAxVI7fhcAZ+VdsmaKGlj8Ol+WOEM2L4TRUvORLc3cUCH6PWKtfj3Tnc3U3MXpimJvRg+qzyLu+zGVz6Iz81hn1Vy/krPlHYtg0rtf9tDNyJnav19Qoncc59x5iOA0zg7zVC4zEst4pCRuqVY0z2z9Fz1uPwEgsSFwn9sHFTzojp2MPT3MWGIkFietg2O/e3vSNqHMRGIkFiZE3bYGRWJC4Cs4ub99ltXojdo/WRoGRWJAYedMWGIkFiTfV8+qFT1gj/4zdk6UaVQqMxILEM8nbX/w48jZLYCQWJEbedHvgeR+CX2/apb+2Mdl/WKvDfuNyH06rQ1arp5xWp2KPYlyN+cgSvweP1fKP2JWSQ5TNechG69/jjLzojDzhnyDb6BHI8YHiWr+Rm9VysOm3Dy0SF8Vqf3s3x2VbchQ49DRDv52MM/JYkx9csW2edom86Qkco9GOBp1Fq+X52LK6huSjEZzbJ7f5gsdOfm5RNv+pDR/XeuOjsfPrGpKPqIyW1QLD5rQFjiLxl4sPOC3HY8vqNsiHb9tFzoz3d6+zRp6Lnexco2w9pDp8XNkrNzotL8fOs5uejz/H2Ao2GNaoI7GTnHOUrYdKG23gntjvvBE7z27jfBwpcn0g32p5J3aCc47SdVF1ow3cE0/uIzcg3269XBg5P9JyZ5EbTT5/ySVK10Utx+/sKYIuahg/31NDy/EiJ1LfLDqVKFsfNRz7ZKg1qt/FGvVq7HxvFFndWrL97qOxE9qGKFsfVR/XGvXzelvQOmXQ6lDsfDdtU/basFqOxU5oG6JsfVR93FFP7au3Ba1TBi1LsfO9Ufg2X+SC0+ql2AltQ5SujwyGi34OvWtAzqeGVi8VudCmzcdiRvn6qPa4p5d3bS0C44/pGpDz6aGGRS4gcN4CjwfFliIw/pguuqRtEZghdN4C33/Lh4rAJNADnyhygYtYeQvMObDkfRHLX1KP/4uYf5StjxqOvbfeFpTiVWiVz22ktVUZoic19yhbH5UfW6tD9bag9cqgnoyd79ZM5PAwlTJfgf2sqCIwjZ6JpTObSunxE7z9RO/oyc04ytZFHcf285OLQDR5LrTN9WEGD48T5iuwf0KoCESzn0ZSeT5O6OGB/nwFXut97qt/w7vOPbEldW19oN/Dkjr5CuyfSloZdG6qq+34z3ZG/hZbVNfWJXXeZXWwQ6yWV2InPbcom/96v4d61q9fVcfMK2vU07Fz7NaJdq5Muc6q/UQOAk/iaJVDySavSmnbtCLl+6EnrrYxlc17oIb9F7/2d87rQts29rzvB4nzFHgSWqzf++jMnp03zNou/PzqJu/MYJH3IgynMxX4YmN/0+93NDLd3X7/ow33RjLd3U3fG8m2edg8DSTOV+DLQqtTk4tRl+9OeHjtb43fndAi73QYTrdA4ITDMmy+OkiMwLFFdcg7H0hMDxxbWEfPi8ShG1rZjMcWIqWwDJvpiRE4vogOeePAcJoeGHkTB4kZQtPzJg4Scw7MsDlxkJiLWJzzJg4ScxWaC1aJw7TL99/qkHesVk+VzZ9/LZuty8X8MT0yPEh8YQE1a+RXK1p9bNb8+ff497Z9oUGLvPFos8RWq7/bXvfeeXPoP8N/VuzyIG9LaeM58eQB90H31qpyOFza9lGn1Z/alUPFw/hNoU09sV/p4tTg5g9XnUP/mf6zW5LD13iet2G0QWL/kPtqb0HVlUP/2U1+kB55Myf34fTQyEN159AaGWQrr2bY3Hiy7YkD7reT4z5WlmFzOuTYE1uj7g+VP6fVA1nlTtPzJkdmPfHJcVFcEyp3/lj+mFnIa7hglSwZ9cRPhM6d3/M3eXk1PW/y5CDxsCcPhs6bv2AWu9zIC1kMp4f97u2hq9IfM3a5NxuWYXN+pNwTn9ULHwmdr8nsrBTl1QybsyXVnriO3f6uhj9mcvIaLlhlT4o9sd8nKHSeTi/v2pqUvJqetzWk1hPH2AFvZV9nZzLyGnre1pGYxHtD58dpWWpAuZEXMhhOa3UodD06o56MXu6rhGXYDClI7B+4D11T1qhXY5cbeSGb4fTIdO4KVZ3+WI2Wl3NeSK0ntlqeCVVrVsux5uaBq82QqsRG7qu78ob9zj2xy4m8kKXE/rzUz5Cqq3pXBp2bmvoUEj0vZCGxM+rZOmZmjQfFFmvU0/HLh7yQ/4Wto+OlbddXVdH+s/xnNqBcVwQXrCDLntivILna396dt3pHg87iZJnaJpaRC1aQs8ROi7VaHj+zZ+cNs5bLz692Rh5zRr0VvRzICy0eTk+Wm7VaDo5Md/f4QHHttHL4//Ov8a9t8vKxDJuhdRK/F1qdmlyM0uqw7519TP594W+non8/5IVYNHo4nUFwzgu1g8TIC4mDxPS8kDhIzLAZEgeJOeeFxEFiLlhB4iAxV5shcZCYW0WQOEjMfV5IHCRmkgYkDhIzwwoSB4mZHgmJ03aJmdsMydNWiZEXsqFtEiMvZEdbJEZeyJbcJUZeyJ5cJUZeaA25SYy80DpykRh5obWkLjHyQutJVWLkBUhUYuQFSFRi5AVIVGLkBUhUYuQFSFRi5AVIVGLkBUhUYuQFSFRi5AVIVGLkBUhUYuQFSFRi5AVIVGLkBUhUYuQFCMxoWS1YI89VIO8L/geBCgQIzHh/9zpr1BFr5PzM4ho579/rP4OKA4jISMudTsvx0gJrOe7fQ6UBNIhzfdlhtXrEajnmjDrhtNhJGHXC/83/n39N7O8JAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFCE4v/t8177cNMPugAAAABJRU5ErkJggg==",
+          "alt": "Git/Github",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 240,
+          "height": 240
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/tailwindlogo-CLR6e3yI.png",
+          "alt": "Tailwind CSS",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 240,
+          "height": 240
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/project1-BnxS_4Lc.png",
+          "alt": "Maharastra Tourism",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 600,
+          "height": 394
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/Project2-CBxyDP5q.png",
+          "alt": "Virtual Bank System",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 955,
+          "height": 594
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/project3-CXjLSUgG.png",
+          "alt": "Attendence Management System",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 1905,
+          "height": 866
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/project4-KHOTjYHY.png",
+          "alt": "Speedo Type",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 1896,
+          "height": 887
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/project5-6U6ykozM.png",
+          "alt": "Insta Vibe",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 576,
+          "height": 354
+        },
+        {
+          "src": "https://portfolio-50590.web.app/assets/project6-DR93ONvm.png",
+          "alt": "Authentication",
+          "altMissing": false,
+          "altEmpty": false,
+          "role": null,
+          "ariaLabel": null,
+          "ariaHidden": false,
+          "width": 768,
+          "height": 814
+        }
+      ],
+      "buttons": [
+        {
+          "text": "Home",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "About",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "Education",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "Skills",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "Project",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "Contact",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": null,
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": true
+        },
+        {
+          "text": "Live Demo",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "Source Code",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "Source Code",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "Source Code",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "Live Demo",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "Source Code",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "Live Demo",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "Source Code",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "Live Demo",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": "Send Message",
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": "submit",
+          "hasNoAccessibleName": false
+        },
+        {
+          "text": null,
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": true
+        },
+        {
+          "text": null,
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": true
+        },
+        {
+          "text": null,
+          "ariaLabel": null,
+          "ariaExpanded": null,
+          "ariaControls": null,
+          "disabled": false,
+          "type": null,
+          "hasNoAccessibleName": true
+        }
+      ],
+      "links": [
+        {
+          "href": null,
+          "text": "Home",
+          "ariaLabel": null,
+          "rel": null,
+          "target": null,
+          "hasNoText": false
+        },
+        {
+          "href": null,
+          "text": "About",
+          "ariaLabel": null,
+          "rel": null,
+          "target": null,
+          "hasNoText": false
+        },
+        {
+          "href": null,
+          "text": "Education",
+          "ariaLabel": null,
+          "rel": null,
+          "target": null,
+          "hasNoText": false
+        },
+        {
+          "href": null,
+          "text": "Skills",
+          "ariaLabel": null,
+          "rel": null,
+          "target": null,
+          "hasNoText": false
+        },
+        {
+          "href": null,
+          "text": "Project",
+          "ariaLabel": null,
+          "rel": null,
+          "target": null,
+          "hasNoText": false
+        },
+        {
+          "href": null,
+          "text": "Contact",
+          "ariaLabel": null,
+          "rel": null,
+          "target": null,
+          "hasNoText": false
+        },
+        {
+          "href": "https://omkarm9090.github.io/Travel-And-Tourism/",
+          "text": "Live Demo",
+          "ariaLabel": null,
+          "rel": "noopener noreferrer",
+          "target": "_blank",
+          "hasNoText": false
+        },
+        {
+          "href": "https://github.com/OmkarM9090/Travel-And-Tourism",
+          "text": "Source Code",
+          "ariaLabel": null,
+          "rel": "noopener noreferrer",
+          "target": "_blank",
+          "hasNoText": false
+        },
+        {
+          "href": "https://github.com/OmkarM9090/Virtual-Banking-System",
+          "text": "Source Code",
+          "ariaLabel": null,
+          "rel": "noopener noreferrer",
+          "target": "_blank",
+          "hasNoText": false
+        },
+        {
+          "href": "https://github.com/OmkarM9090/Attendence-Management-System-",
+          "text": "Source Code",
+          "ariaLabel": null,
+          "rel": "noopener noreferrer",
+          "target": "_blank",
+          "hasNoText": false
+        },
+        {
+          "href": "https://speedotype9090.web.app/",
+          "text": "Live Demo",
+          "ariaLabel": null,
+          "rel": "noopener noreferrer",
+          "target": "_blank",
+          "hasNoText": false
+        },
+        {
+          "href": "https://github.com/OmkarM9090/speedotype/tree/main",
+          "text": "Source Code",
+          "ariaLabel": null,
+          "rel": "noopener noreferrer",
+          "target": "_blank",
+          "hasNoText": false
+        },
+        {
+          "href": "https://instavibe-f1447.web.app/",
+          "text": "Live Demo",
+          "ariaLabel": null,
+          "rel": "noopener noreferrer",
+          "target": "_blank",
+          "hasNoText": false
+        },
+        {
+          "href": "https://github.com/OmkarM9090/InstaVibe",
+          "text": "Source Code",
+          "ariaLabel": null,
+          "rel": "noopener noreferrer",
+          "target": "_blank",
+          "hasNoText": false
+        },
+        {
+          "href": "https://portfolio-50590.web.app/authentication-2792005.web.app",
+          "text": "Live Demo",
+          "ariaLabel": null,
+          "rel": "noopener noreferrer",
+          "target": "_blank",
+          "hasNoText": false
+        },
+        {
+          "href": "https://www.instagram.com/omkar___9090/",
+          "text": null,
+          "ariaLabel": null,
+          "rel": "noopener noreferrer",
+          "target": "_blank",
+          "hasNoText": true
+        },
+        {
+          "href": "https://github.com/OmkarM9090",
+          "text": null,
+          "ariaLabel": null,
+          "rel": "noopener noreferrer",
+          "target": "_blank",
+          "hasNoText": true
+        },
+        {
+          "href": "https://www.linkedin.com/in/omkar-mahadik-976532283/",
+          "text": null,
+          "ariaLabel": null,
+          "rel": "noopener noreferrer",
+          "target": "_blank",
+          "hasNoText": true
+        }
+      ],
+      "forms": [
+        {
+          "id": null,
+          "action": "https://portfolio-50590.web.app/",
+          "method": "get",
+          "fields": [
+            {
+              "tagName": "input",
+              "type": "text",
+              "name": "name",
+              "id": "name",
+              "placeholder": "Enter your name",
+              "ariaLabel": null,
+              "ariaRequired": null,
+              "required": true,
+              "labelText": "Your Name",
+              "hasNoLabel": false
+            },
+            {
+              "tagName": "input",
+              "type": "email",
+              "name": "email",
+              "id": "email",
+              "placeholder": "Enter your email",
+              "ariaLabel": null,
+              "ariaRequired": null,
+              "required": true,
+              "labelText": "Your Email",
+              "hasNoLabel": false
+            },
+            {
+              "tagName": "textarea",
+              "type": "textarea",
+              "name": "message",
+              "id": "message",
+              "placeholder": "Enter your message",
+              "ariaLabel": null,
+              "ariaRequired": null,
+              "required": true,
+              "labelText": "Your Message",
+              "hasNoLabel": false
+            }
+          ]
+        }
+      ],
+      "landmarks": [
+        {
+          "tag": "nav",
+          "role": null,
+          "ariaLabel": null,
+          "ariaLabelledby": null,
+          "id": null
+        }
+      ],
+      "ariaSnapshot": null,
+      "axeResults": {
+        "pageUrl": "https://portfolio-50590.web.app/",
+        "analysedAt": "2026-03-25T21:47:57.509Z",
+        "axeVersion": "4.11.1",
+        "config": {
+          "runOnly": [
+            "wcag2a",
+            "wcag2aa",
+            "best-practice"
+          ],
+          "disabledRules": []
+        },
+        "summary": {
+          "totalViolations": 6,
+          "totalViolationNodes": 57,
+          "totalIncomplete": 1,
+          "critical": 4,
+          "serious": 6,
+          "moderate": 47,
+          "minor": 0,
+          "issuesPerRule": {
+            "region": {
+              "nodeCount": 45,
+              "impact": "moderate",
+              "description": "Ensure all page content is contained by landmarks",
+              "help": "All page content should be contained by landmarks",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/region?application=axeAPI"
+            },
+            "button-name": {
+              "nodeCount": 4,
+              "impact": "critical",
+              "description": "Ensure buttons have discernible text",
+              "help": "Buttons must have discernible text",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/button-name?application=axeAPI"
+            },
+            "color-contrast": {
+              "nodeCount": 3,
+              "impact": "serious",
+              "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+              "help": "Elements must meet minimum color contrast ratio thresholds",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=axeAPI"
+            },
+            "link-name": {
+              "nodeCount": 3,
+              "impact": "serious",
+              "description": "Ensure links have discernible text",
+              "help": "Links must have discernible text",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/link-name?application=axeAPI"
+            },
+            "heading-order": {
+              "nodeCount": 1,
+              "impact": "moderate",
+              "description": "Ensure the order of headings is semantically correct",
+              "help": "Heading levels should only increase by one",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/heading-order?application=axeAPI"
+            },
+            "landmark-one-main": {
+              "nodeCount": 1,
+              "impact": "moderate",
+              "description": "Ensure the document has a main landmark",
+              "help": "Document should have one main landmark",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/landmark-one-main?application=axeAPI"
+            }
+          }
+        },
+        "violations": [
+          {
+            "id": "button-name",
+            "impact": "critical",
+            "description": "Ensure buttons have discernible text",
+            "help": "Buttons must have discernible text",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/button-name?application=axeAPI",
+            "tags": [
+              "cat.name-role-value",
+              "wcag2a",
+              "wcag412",
+              "section508",
+              "section508.22.a",
+              "TTv5",
+              "TT6.a",
+              "EN-301-549",
+              "EN-9.4.1.2",
+              "ACT",
+              "RGAAv4",
+              "RGAA-11.9.1"
+            ],
+            "nodeCount": 4,
+            "nodes": [
+              {
+                "html": "<button>",
+                "target": [
+                  "#sun > button"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "button-has-visible-text",
+                    "message": "Element does not have inner text that is visible to screen readers"
+                  },
+                  {
+                    "id": "aria-label",
+                    "message": "aria-label attribute does not exist or is empty"
+                  },
+                  {
+                    "id": "aria-labelledby",
+                    "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty"
+                  },
+                  {
+                    "id": "non-empty-title",
+                    "message": "Element has no title attribute"
+                  },
+                  {
+                    "id": "implicit-label",
+                    "message": "Element does not have an implicit (wrapped) <label>"
+                  },
+                  {
+                    "id": "explicit-label",
+                    "message": "Element does not have an explicit <label>"
+                  },
+                  {
+                    "id": "presentational-role",
+                    "message": "Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<button class=\"relative w-12 h-12 rounded-full group\">",
+                "target": [
+                  ".social-button:nth-child(1) > a[target=\"_blank\"][rel=\"noopener noreferrer\"] > .w-12.h-12.group"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "button-has-visible-text",
+                    "message": "Element does not have inner text that is visible to screen readers"
+                  },
+                  {
+                    "id": "aria-label",
+                    "message": "aria-label attribute does not exist or is empty"
+                  },
+                  {
+                    "id": "aria-labelledby",
+                    "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty"
+                  },
+                  {
+                    "id": "non-empty-title",
+                    "message": "Element has no title attribute"
+                  },
+                  {
+                    "id": "implicit-label",
+                    "message": "Element does not have an implicit (wrapped) <label>"
+                  },
+                  {
+                    "id": "explicit-label",
+                    "message": "Element does not have an explicit <label>"
+                  },
+                  {
+                    "id": "presentational-role",
+                    "message": "Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<button class=\"relative w-12 h-12 rounded-full group\">",
+                "target": [
+                  "a[href$=\"OmkarM9090\"] > .w-12.h-12.group"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "button-has-visible-text",
+                    "message": "Element does not have inner text that is visible to screen readers"
+                  },
+                  {
+                    "id": "aria-label",
+                    "message": "aria-label attribute does not exist or is empty"
+                  },
+                  {
+                    "id": "aria-labelledby",
+                    "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty"
+                  },
+                  {
+                    "id": "non-empty-title",
+                    "message": "Element has no title attribute"
+                  },
+                  {
+                    "id": "implicit-label",
+                    "message": "Element does not have an implicit (wrapped) <label>"
+                  },
+                  {
+                    "id": "explicit-label",
+                    "message": "Element does not have an explicit <label>"
+                  },
+                  {
+                    "id": "presentational-role",
+                    "message": "Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<button class=\"relative w-12 h-12 rounded-full group\">",
+                "target": [
+                  ".social-button:nth-child(3) > a[target=\"_blank\"][rel=\"noopener noreferrer\"] > .w-12.h-12.group"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "button-has-visible-text",
+                    "message": "Element does not have inner text that is visible to screen readers"
+                  },
+                  {
+                    "id": "aria-label",
+                    "message": "aria-label attribute does not exist or is empty"
+                  },
+                  {
+                    "id": "aria-labelledby",
+                    "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty"
+                  },
+                  {
+                    "id": "non-empty-title",
+                    "message": "Element has no title attribute"
+                  },
+                  {
+                    "id": "implicit-label",
+                    "message": "Element does not have an implicit (wrapped) <label>"
+                  },
+                  {
+                    "id": "explicit-label",
+                    "message": "Element does not have an explicit <label>"
+                  },
+                  {
+                    "id": "presentational-role",
+                    "message": "Element's default semantics were not overridden with role=\"none\" or role=\"presentation\""
+                  }
+                ],
+                "all": [],
+                "none": []
+              }
+            ]
+          },
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+            "help": "Elements must meet minimum color contrast ratio thresholds",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=axeAPI",
+            "tags": [
+              "cat.color",
+              "wcag2aa",
+              "wcag143",
+              "TTv5",
+              "TT13.c",
+              "EN-301-549",
+              "EN-9.1.4.3",
+              "ACT",
+              "RGAAv4",
+              "RGAA-3.2.1"
+            ],
+            "nodeCount": 3,
+            "nodes": [
+              {
+                "html": "<h2 id=\"one\">INTRODUCTION</h2>",
+                "target": [
+                  "#one"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.84 (foreground color: #808080, background color: #f0ffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1",
+                "boundingBox": {
+                  "x": 192,
+                  "y": 1310,
+                  "width": 1280,
+                  "height": 24
+                },
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element has insufficient color contrast of 3.84 (foreground color: #808080, background color: #f0ffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h2 id=\"head1\">My Knowledge of </h2>",
+                "target": [
+                  "#head1"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.84 (foreground color: #808080, background color: #f0ffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1",
+                "boundingBox": {
+                  "x": 192,
+                  "y": 3291,
+                  "width": 1088,
+                  "height": 24
+                },
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element has insufficient color contrast of 3.84 (foreground color: #808080, background color: #f0ffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h2 id=\"hed1\">MY Work</h2>",
+                "target": [
+                  "#hed1"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.84 (foreground color: #808080, background color: #f0ffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1",
+                "boundingBox": {
+                  "x": 192,
+                  "y": 4644,
+                  "width": 1088,
+                  "height": 24
+                },
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element has insufficient color contrast of 3.84 (foreground color: #808080, background color: #f0ffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+                  }
+                ],
+                "all": [],
+                "none": []
+              }
+            ]
+          },
+          {
+            "id": "link-name",
+            "impact": "serious",
+            "description": "Ensure links have discernible text",
+            "help": "Links must have discernible text",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/link-name?application=axeAPI",
+            "tags": [
+              "cat.name-role-value",
+              "wcag2a",
+              "wcag244",
+              "wcag412",
+              "section508",
+              "section508.22.a",
+              "TTv5",
+              "TT6.a",
+              "EN-301-549",
+              "EN-9.2.4.4",
+              "EN-9.4.1.2",
+              "ACT",
+              "RGAAv4",
+              "RGAA-6.2.1"
+            ],
+            "nodeCount": 3,
+            "nodes": [
+              {
+                "html": "<a href=\"https://www.instagram.com/omkar___9090/\" target=\"_blank\" rel=\"noopener noreferrer\">",
+                "target": [
+                  ".social-button:nth-child(1) > a[target=\"_blank\"][rel=\"noopener noreferrer\"]"
+                ],
+                "failureSummary": "Fix all of the following:\n  Element is in tab order and does not have accessible text\n\nFix any of the following:\n  Element does not have text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "has-visible-text",
+                    "message": "Element does not have text that is visible to screen readers"
+                  },
+                  {
+                    "id": "aria-label",
+                    "message": "aria-label attribute does not exist or is empty"
+                  },
+                  {
+                    "id": "aria-labelledby",
+                    "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty"
+                  },
+                  {
+                    "id": "non-empty-title",
+                    "message": "Element has no title attribute"
+                  }
+                ],
+                "all": [],
+                "none": [
+                  {
+                    "id": "focusable-no-name",
+                    "message": "Element is in tab order and does not have accessible text"
+                  }
+                ]
+              },
+              {
+                "html": "<a href=\"https://github.com/OmkarM9090\" target=\"_blank\" rel=\"noopener noreferrer\">",
+                "target": [
+                  "a[href$=\"OmkarM9090\"]"
+                ],
+                "failureSummary": "Fix all of the following:\n  Element is in tab order and does not have accessible text\n\nFix any of the following:\n  Element does not have text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute",
+                "boundingBox": {
+                  "x": 616,
+                  "y": 7047,
+                  "width": 48,
+                  "height": 21
+                },
+                "any": [
+                  {
+                    "id": "has-visible-text",
+                    "message": "Element does not have text that is visible to screen readers"
+                  },
+                  {
+                    "id": "aria-label",
+                    "message": "aria-label attribute does not exist or is empty"
+                  },
+                  {
+                    "id": "aria-labelledby",
+                    "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty"
+                  },
+                  {
+                    "id": "non-empty-title",
+                    "message": "Element has no title attribute"
+                  }
+                ],
+                "all": [],
+                "none": [
+                  {
+                    "id": "focusable-no-name",
+                    "message": "Element is in tab order and does not have accessible text"
+                  }
+                ]
+              },
+              {
+                "html": "<a href=\"https://www.linkedin.com/in/omkar-mahadik-976532283/\" target=\"_blank\" rel=\"noopener noreferrer\">",
+                "target": [
+                  ".social-button:nth-child(3) > a[target=\"_blank\"][rel=\"noopener noreferrer\"]"
+                ],
+                "failureSummary": "Fix all of the following:\n  Element is in tab order and does not have accessible text\n\nFix any of the following:\n  Element does not have text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "has-visible-text",
+                    "message": "Element does not have text that is visible to screen readers"
+                  },
+                  {
+                    "id": "aria-label",
+                    "message": "aria-label attribute does not exist or is empty"
+                  },
+                  {
+                    "id": "aria-labelledby",
+                    "message": "aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty"
+                  },
+                  {
+                    "id": "non-empty-title",
+                    "message": "Element has no title attribute"
+                  }
+                ],
+                "all": [],
+                "none": [
+                  {
+                    "id": "focusable-no-name",
+                    "message": "Element is in tab order and does not have accessible text"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "heading-order",
+            "impact": "moderate",
+            "description": "Ensure the order of headings is semantically correct",
+            "help": "Heading levels should only increase by one",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/heading-order?application=axeAPI",
+            "tags": [
+              "cat.semantics",
+              "best-practice"
+            ],
+            "nodeCount": 1,
+            "nodes": [
+              {
+                "html": "<h3>Web Developer</h3>",
+                "target": [
+                  ".card1:nth-child(1) > h3"
+                ],
+                "failureSummary": "Fix any of the following:\n  Heading order invalid",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "heading-order",
+                    "message": "Heading order invalid"
+                  }
+                ],
+                "all": [],
+                "none": []
+              }
+            ]
+          },
+          {
+            "id": "landmark-one-main",
+            "impact": "moderate",
+            "description": "Ensure the document has a main landmark",
+            "help": "Document should have one main landmark",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/landmark-one-main?application=axeAPI",
+            "tags": [
+              "cat.semantics",
+              "best-practice"
+            ],
+            "nodeCount": 1,
+            "nodes": [
+              {
+                "html": "<html lang=\"en\">",
+                "target": [
+                  "html"
+                ],
+                "failureSummary": "Fix all of the following:\n  Document does not have a main landmark",
+                "boundingBox": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 1280,
+                  "height": 7229
+                },
+                "any": [],
+                "all": [
+                  {
+                    "id": "page-has-main",
+                    "message": "Document does not have a main landmark"
+                  }
+                ],
+                "none": []
+              }
+            ]
+          },
+          {
+            "id": "region",
+            "impact": "moderate",
+            "description": "Ensure all page content is contained by landmarks",
+            "help": "All page content should be contained by landmarks",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/region?application=axeAPI",
+            "tags": [
+              "cat.keyboard",
+              "best-practice",
+              "RGAAv4",
+              "RGAA-9.2.1"
+            ],
+            "nodeCount": 45,
+            "nodes": [
+              {
+                "html": "<span class=\"head\"><h1>Hello 👋, Welcome to my portfolio.</h1></span>",
+                "target": [
+                  ".head"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 40,
+                  "y": 269,
+                  "width": 1280,
+                  "height": 72
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<span class=\"sechead\"><h1>I am Omkar</h1></span>",
+                "target": [
+                  ".sechead"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 0,
+                  "y": 72,
+                  "width": 1280,
+                  "height": 63
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<span class=\"web\">Web Developer</span>",
+                "target": [
+                  ".web"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 358,
+                  "y": 447,
+                  "width": 496,
+                  "height": 94
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<div class=\"me\"><p>I’m a passionate Web Developer and a under Graduate Computer Engineering student, dedicated to building modern, user-centric web applications and constantly evolving my skills in the tech world📈.</p></div>",
+                "target": [
+                  ".me"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 384,
+                  "y": 557,
+                  "width": 512,
+                  "height": 108
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<span class=\"scroll\">",
+                "target": [
+                  ".scroll"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 410,
+                  "y": 732,
+                  "width": 1280,
+                  "height": 24
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<div class=\"image\"><img alt=\"Oggy\" src=\"https://pngfre.com/wp-content/uploads/oggy-1.png\" style=\"transform: translateX(968.498px) rotate(352.439deg);\"></div>",
+                "target": [
+                  ".image"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 0,
+                  "y": 228,
+                  "width": 400,
+                  "height": 400
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h2 id=\"one\">INTRODUCTION</h2>",
+                "target": [
+                  "#one"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 192,
+                  "y": 1310,
+                  "width": 1280,
+                  "height": 24
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h1>Overview</h1>",
+                "target": [
+                  ".first > h1"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p id=\"para1\">",
+                "target": [
+                  "#para1"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 192,
+                  "y": 1424,
+                  "width": 896,
+                  "height": 120
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h3>Web Developer</h3>",
+                "target": [
+                  ".card1:nth-child(1) > h3"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h3>Java Developer</h3>",
+                "target": [
+                  ".card1:nth-child(2) > h3"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h3>DSA Problem Solving</h3>",
+                "target": [
+                  ".card1:nth-child(3) > h3"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h3>Backend &amp; Frontend Developer</h3>",
+                "target": [
+                  ".card1:nth-child(4) > h3"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<div class=\"education\">",
+                "target": [
+                  ".education"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 0,
+                  "y": 2042,
+                  "width": 1280,
+                  "height": 1185
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<div class=\"all\">",
+                "target": [
+                  ".all"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 0,
+                  "y": 3227,
+                  "width": 1280,
+                  "height": 1353
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<div class=\"headinglines\">",
+                "target": [
+                  ".headinglines"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 192,
+                  "y": 4644,
+                  "width": 1088,
+                  "height": 216
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<img alt=\"Maharastra Tourism\" src=\"/assets/project1-BnxS_4Lc.png\">",
+                "target": [
+                  "img[alt=\"Maharastra Tourism\"]"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 259,
+                  "y": 5035,
+                  "width": 348,
+                  "height": 229
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p class=\"card__title\">Maharastra Tourism</p>",
+                "target": [
+                  ".procard:nth-child(1) > .card__content > .card__title"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p class=\"card__description\">",
+                "target": [
+                  ".procard:nth-child(1) > .card__content > .card__description"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p id=\"stack\">#html css js</p>",
+                "target": [
+                  ".procard:nth-child(1) > .card__content > p:nth-child(4)"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<img alt=\"Virtual Bank System\" src=\"/assets/Project2-CBxyDP5q.png\">",
+                "target": [
+                  "img[alt=\"Virtual Bank System\"]"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 674,
+                  "y": 5042,
+                  "width": 348,
+                  "height": 216
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p class=\"card__title\">Virtual Bank System</p>",
+                "target": [
+                  ".procard:nth-child(2) > .card__content > .card__title"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p class=\"card__description\">A Virtual Banking System is a digital platform that enablrs users to manage their banking activities online. It offers features like secure login and profile updates, online transaction, passbook display and facilities to deposit and withdraw</p>",
+                "target": [
+                  ".procard:nth-child(2) > .card__content > .card__description"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p id=\"stack\">#Java Swing Sql</p>",
+                "target": [
+                  ".procard:nth-child(2) > .card__content > p:nth-child(4)"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<img alt=\"Attendence Management System\" src=\"/assets/project3-CXjLSUgG.png\">",
+                "target": [
+                  "img[alt=\"Attendence Management System\"]"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 259,
+                  "y": 5536,
+                  "width": 348,
+                  "height": 158
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p class=\"card__title\">Attendence Management System</p>",
+                "target": [
+                  ".procard:nth-child(3) > .card__content > .card__title"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p class=\"card__description\">",
+                "target": [
+                  ".procard:nth-child(3) > .card__content > .card__description"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p id=\"stack\">#Java Swing Sql</p>",
+                "target": [
+                  ".procard:nth-child(3) > .card__content > p:nth-child(4)"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<img alt=\"Speedo Type\" src=\"/assets/project4-KHOTjYHY.png\">",
+                "target": [
+                  "img[alt=\"Speedo Type\"]"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 674,
+                  "y": 5533,
+                  "width": 348,
+                  "height": 163
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p class=\"card__title\">Speedo Type</p>",
+                "target": [
+                  ".procard:nth-child(4) > .card__content > .card__title"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p class=\"card__description\">Speedo Type is a sleek and interactive typing speed test web application built using React.js. It helps users practice and improve their typing speed and accuracy by providing real-time feedback on WPM (Words Per Minute) and typing performance</p>",
+                "target": [
+                  ".procard:nth-child(4) > .card__content > .card__description"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p id=\"stack\">#React.js CSS</p>",
+                "target": [
+                  ".procard:nth-child(4) > .card__content > p:nth-child(5)"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<img alt=\"Insta Vibe\" src=\"/assets/project5-6U6ykozM.png\">",
+                "target": [
+                  "img[alt=\"Insta Vibe\"]"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 259,
+                  "y": 5973,
+                  "width": 348,
+                  "height": 214
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p class=\"card__title\">Insta Vibe</p>",
+                "target": [
+                  ".procard:nth-child(5) > .card__content > .card__title"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p class=\"card__description\">",
+                "target": [
+                  ".procard:nth-child(5) > .card__content > .card__description"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p id=\"stack\">#React.js, Express.js, MongoDB Atlas, Node.js, Multer, Render ,Cloudinary</p>",
+                "target": [
+                  ".procard:nth-child(5) > .card__content > p:nth-child(5)"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<img alt=\"Authentication\" src=\"/assets/project6-DR93ONvm.png\">",
+                "target": [
+                  "img[alt=\"Authentication\"]"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 674,
+                  "y": 5895,
+                  "width": 348,
+                  "height": 369
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p class=\"card__title\">Authentication</p>",
+                "target": [
+                  ".procard:nth-child(6) > .card__content > .card__title"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p class=\"card__description\">Built a secure and user-friendly authentication system using Firebase Authentication. The app supports email-password sign-up and login, password reset, and protected routes based on user login state.</p>",
+                "target": [
+                  ".procard:nth-child(6) > .card__content > .card__description"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p id=\"stack\">#React.js, FirebaseAuth,Firebase Hosting</p>",
+                "target": [
+                  ".procard:nth-child(6) > .card__content > p:nth-child(4)"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h2 class=\"naming text-2xl font-semibold text-gray-800 mb-4\">Contact Us</h2>",
+                "target": [
+                  ".text-2xl"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 449,
+                  "y": 6523,
+                  "width": 382,
+                  "height": 32
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<div class=\"mb-4\">",
+                "target": [
+                  "form > .mb-4:nth-child(1)"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<div class=\"mb-4\">",
+                "target": [
+                  ".mb-4:nth-child(2)"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 449,
+                  "y": 6655,
+                  "width": 382,
+                  "height": 68
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<div class=\"mb-4\">",
+                "target": [
+                  ".mb-4:nth-child(3)"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": {
+                  "x": 449,
+                  "y": 6739,
+                  "width": 382,
+                  "height": 146
+                },
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h2 class=\"naming\">I am grateful for any contact or message that you can send me through my Email, LinkedIn, Github, Instagram, or the form Above.</h2>",
+                "target": [
+                  ".last > .naming"
+                ],
+                "failureSummary": "Fix any of the following:\n  Some page content is not contained by landmarks",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "region",
+                    "message": "Some page content is not contained by landmarks"
+                  }
+                ],
+                "all": [],
+                "none": []
+              }
+            ]
+          }
+        ],
+        "incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+            "help": "Elements must meet minimum color contrast ratio thresholds",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=axeAPI",
+            "tags": [
+              "cat.color",
+              "wcag2aa",
+              "wcag143",
+              "TTv5",
+              "TT13.c",
+              "EN-301-549",
+              "EN-9.1.4.3",
+              "ACT",
+              "RGAAv4",
+              "RGAA-3.2.1"
+            ],
+            "nodeCount": 22,
+            "nodes": [
+              {
+                "html": "<h1 class=\"text-gradient\">Omkar Mahadik</h1>",
+                "target": [
+                  ".text-gradient"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+                "boundingBox": {
+                  "x": 56,
+                  "y": 10,
+                  "width": 183,
+                  "height": 33
+                },
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a background gradient"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h1>Hello 👋, Welcome to my portfolio.</h1>",
+                "target": [
+                  ".head > h1"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a background gradient"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h1>I am Omkar</h1>",
+                "target": [
+                  ".sechead > h1"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined because it is overlapped by another element",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined because it is overlapped by another element"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<span class=\"web\">Web Developer</span>",
+                "target": [
+                  ".web"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+                "boundingBox": {
+                  "x": 358,
+                  "y": 447,
+                  "width": 496,
+                  "height": 94
+                },
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a background gradient"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<p>I’m a passionate Web Developer and a under Graduate Computer Engineering student, dedicated to building modern, user-centric web applications and constantly evolving my skills in the tech world📈.</p>",
+                "target": [
+                  ".me > p"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a background gradient"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<span class=\"scroll\">",
+                "target": [
+                  ".scroll"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+                "boundingBox": {
+                  "x": 410,
+                  "y": 732,
+                  "width": 1280,
+                  "height": 24
+                },
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a background gradient"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h3 id=\"ed\">SO FAR</h3>",
+                "target": [
+                  "#ed"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+                "boundingBox": {
+                  "x": 192,
+                  "y": 2089,
+                  "width": 55,
+                  "height": 24
+                },
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a background gradient"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h1 id=\"ed1\">Education</h1>",
+                "target": [
+                  "#ed1"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+                "boundingBox": {
+                  "x": 192,
+                  "y": 2113,
+                  "width": 311,
+                  "height": 90
+                },
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a background gradient"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h2>Watumall Institute Of Technology And Engineering</h2>",
+                "target": [
+                  ".edu:nth-child(1) > .content > h2"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a pseudo element"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h3>B.E. In Comp Engg</h3>",
+                "target": [
+                  ".edu:nth-child(1) > .content > h3"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a pseudo element"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<li>CGPA:-8.67 (Avg. Till 3rd Sem)</li>",
+                "target": [
+                  ".edu:nth-child(1) > .content > .para > ul > li"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a pseudo element"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h2>K.V. Pendharkar College of Science Commerce and Arts</h2>",
+                "target": [
+                  ".edu:nth-child(2) > .content > h2"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a pseudo element"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h3>11-12th Sci HSC</h3>",
+                "target": [
+                  ".edu:nth-child(2) > .content > h3"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a pseudo element"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<li>Score:62.83%</li>",
+                "target": [
+                  ".edu:nth-child(2) > .content > .para > ul > li"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a pseudo element"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h2>Tilak NAgar Vidya Mandir</h2>",
+                "target": [
+                  ".edu:nth-child(3) > .content > h2"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a pseudo element"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h3>1-10th SSC</h3>",
+                "target": [
+                  ".edu:nth-child(3) > .content > h3"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a pseudo element"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<li>Score:79.80%</li>",
+                "target": [
+                  ".edu:nth-child(3) > .content > .para > ul > li"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a pseudo element",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a pseudo element"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h2 class=\"naming text-2xl font-semibold text-gray-800 mb-4\">Contact Us</h2>",
+                "target": [
+                  ".text-2xl"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+                "boundingBox": {
+                  "x": 449,
+                  "y": 6523,
+                  "width": 382,
+                  "height": 32
+                },
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a background gradient"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<label class=\"naming block text-gray-800 mb-1\" for=\"name\">Your Name</label>",
+                "target": [
+                  "label[for=\"name\"]"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+                "boundingBox": {
+                  "x": 449,
+                  "y": 6571,
+                  "width": 382,
+                  "height": 24
+                },
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a background gradient"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<label class=\"naming block text-gray-800 mb-1\" for=\"email\">Your Email</label>",
+                "target": [
+                  "label[for=\"email\"]"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+                "boundingBox": {
+                  "x": 449,
+                  "y": 6655,
+                  "width": 382,
+                  "height": 24
+                },
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a background gradient"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<label class=\"naming block text-gray-800 mb-1\" for=\"message\">Your Message</label>",
+                "target": [
+                  "label[for=\"message\"]"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+                "boundingBox": {
+                  "x": 449,
+                  "y": 6739,
+                  "width": 382,
+                  "height": 24
+                },
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a background gradient"
+                  }
+                ],
+                "all": [],
+                "none": []
+              },
+              {
+                "html": "<h2 class=\"naming\">I am grateful for any contact or message that you can send me through my Email, LinkedIn, Github, Instagram, or the form Above.</h2>",
+                "target": [
+                  ".last > .naming"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient",
+                "boundingBox": null,
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "message": "Element's background color could not be determined due to a background gradient"
+                  }
+                ],
+                "all": [],
+                "none": []
+              }
+            ]
+          }
+        ]
+      },
+      "screenshot": {
+        "path": "output\\screenshots\\portfolio-50590_web_app_1774475277510.png",
+        "filename": "portfolio-50590_web_app_1774475277510.png",
+        "url": "https://portfolio-50590.web.app/"
+      },
+      "htmlPath": "C:\\MERN Practice\\ErrorFlow_hn4\\Backend\\output\\html\\portfolio-50590_web_app.html",
+      "console": {
+        "totalLogs": 0,
+        "totalErrors": 0,
+        "totalWarnings": 0,
+        "logs": [],
+        "errors": [],
+        "warnings": [],
+        "jsErrors": []
+      },
+      "network": {
+        "totalRequests": 30,
+        "failedRequests": []
+      },
+      "crawledAt": "2026-03-25T21:47:58.533Z"
+    }
+  ],
+  "errors": []
+}

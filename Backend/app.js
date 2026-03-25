@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const auditRouter = require("./routes/audit");
 const authRoutes = require("./routes/authRoutes");
 
@@ -46,6 +47,9 @@ app.get("/", (_req, res) => {
 
 app.use("/api/audit", auditRouter);
 app.use("/api/auth", authRoutes);
+
+// ── Static files ────────────────────────────────────────────────────────────
+app.use('/screenshots', express.static(path.join(__dirname, 'output/screenshots')));
 
 // ── 404 catch-all ───────────────────────────────────────────────────────────
 app.use((_req, res) => {

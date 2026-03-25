@@ -5,8 +5,9 @@ import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell,
   RadarChart, PolarGrid, PolarAngleAxis, Radar, AreaChart, Area, CartesianGrid
 } from 'recharts';
-import { Download, Sparkles, AlertTriangle, Timer, Boxes, Globe, Accessibility, Brain, Code2, Activity } from 'lucide-react';
+import { Download, Sparkles, AlertTriangle, Timer, Boxes, Globe, Accessibility, Brain, Code2, Activity, Eye } from 'lucide-react';
 import InsightsPanel from './InsightsPanel';
+import VisualPreview from './VisualPreview';
 
 import { buildDashboardModel, ringColorByScore } from '../utils/dashboardLogic.js';
 
@@ -16,6 +17,7 @@ const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:300
 const tabs = [
   { key: 'overview', label: 'Overview' },
   { key: 'impact', label: 'User Impact' },
+  { key: 'preview', label: 'Visual Preview' },
   { key: 'dom', label: 'DOM Visuals' },
   { key: 'performance', label: 'Performance' },
   { key: 'ai', label: 'AI Fixes' },
@@ -147,8 +149,8 @@ export default function AccessibilityDashboard({ auditData }) {
                 type="button"
                 onClick={() => setSimulateErrors((prev) => !prev)}
                 className={`inline-flex items-center gap-2 rounded-2xl border px-4 py-2 text-sm font-semibold transition ${simulateErrors
-                    ? 'border-rose-200 bg-rose-500 text-white'
-                    : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+                  ? 'border-rose-200 bg-rose-500 text-white'
+                  : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
                   }`}
               >
                 <AlertTriangle size={16} />
@@ -210,8 +212,8 @@ export default function AccessibilityDashboard({ auditData }) {
                     type="button"
                     onClick={() => setActiveTab(tab.key)}
                     className={`relative rounded-xl px-4 py-2 text-sm font-semibold transition ${isActive
-                        ? 'text-indigo-600'
-                        : 'text-slate-600 hover:text-slate-900'
+                      ? 'text-indigo-600'
+                      : 'text-slate-600 hover:text-slate-900'
                       }`}
                   >
                     {tab.label}
@@ -300,6 +302,10 @@ export default function AccessibilityDashboard({ auditData }) {
               </div>
             </div>
           </div>
+        </TabPanel>
+
+        <TabPanel tabKey="preview" activeTab={activeTab}>
+          <VisualPreview auditData={auditData} />
         </TabPanel>
 
         <TabPanel tabKey="dom" activeTab={activeTab}>
