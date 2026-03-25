@@ -142,7 +142,7 @@ const Footer = () => {
         viewport={{ once: true }}
         className="max-w-7xl mx-auto px-6 md:px-12 mt-20 pt-8 border-t border-slate-800/50 flex flex-col md:flex-row items-center justify-between gap-4 text-sm font-medium"
       >
-        <p>© {new Date().getFullYear()} A11yAudit. Built for Hackverse 2.0.</p>
+        <p>© {new Date().getFullYear()} A11yAudit.</p>
         <div className="flex items-center gap-6">
           <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
           <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
