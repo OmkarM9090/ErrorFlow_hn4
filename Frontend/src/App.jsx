@@ -128,11 +128,16 @@ function App() {
               type="button"
               onClick={() => {
                 setAuditData(null);
-                setView('landing');
+                if (sessionUser) {
+                  setView('url-input');
+                } else {
+                  setView('landing');
+                  setUrlModalOpen(true);
+                }
               }}
               className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-indigo-200 hover:text-indigo-600 transition"
             >
-              &larr; Back to Home
+              &larr; Analyze New URL
             </button>
           </div>
           {/* Main Dashboard Component passing the fetched data */}
