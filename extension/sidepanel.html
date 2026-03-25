@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AccessLens AI</title>
+  <link rel="stylesheet" href="./sidepanel.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <div class="brand-icon">A</div>
+        <div>
+          <div class="brand-title">AccessLens AI</div>
+          <div class="brand-subtitle">Accessibility audit + remediation</div>
+        </div>
+      </div>
+      <div class="live-pill">
+        <span class="live-dot"></span>
+        Ready
+      </div>
+    </header>
+
+    <main class="app">
+      <section class="hero-card">
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+          <div class="eyebrow">Chrome Extension</div>
+          <h1>Accessibility audits that actually help fix things.</h1>
+          <p>
+            Scan the current page, run multi-page deep scans, and generate AI-powered remediations for real WCAG issues.
+          </p>
+
+          <div class="hero-actions">
+            <button id="scanCurrentBtn" class="btn btn-primary">Scan Current Page</button>
+            <button id="clearBtn" class="btn btn-secondary">Clear Highlights</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid-two">
+        <div class="card">
+          <div class="card-header">
+            <h2>Project Setup</h2>
+            <span class="chip">Scan Config</span>
+          </div>
+
+          <label for="projectName">Project Name</label>
+          <input id="projectName" class="input" placeholder="My Website" />
+
+          <div class="row">
+            <div class="field">
+              <label for="maxPages">Max Pages</label>
+              <input id="maxPages" class="input" type="number" value="5" min="1" max="30" />
+            </div>
+
+            <div class="field">
+              <label for="framework">Preferred Output</label>
+              <select id="framework" class="input">
+                <option value="html">HTML</option>
+                <option value="react">React</option>
+              </select>
+            </div>
+          </div>
+
+          <button id="deepScanBtn" class="btn btn-accent">Run Deep Scan</button>
+        </div>
+
+        <div class="card stats-card">
+          <div class="card-header">
+            <h2>Quick Stats</h2>
+            <span class="chip">Live</span>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-box">
+              <span class="stat-label">Pages</span>
+              <span class="stat-value" id="statPages">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Violations</span>
+              <span class="stat-value" id="statViolations">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Critical</span>
+              <span class="stat-value danger" id="statCritical">0</span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Score</span>
+              <span class="stat-value success" id="statScore">—</span>
+            </div>
+          </div>
+
+          <div id="loadingBar" class="loading-bar hidden">
+            <div class="loading-bar-inner"></div>
+          </div>
+
+          <div id="globalStatus" class="status-text">Idle</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Summary</h2>
+          <span class="chip">Overview</span>
+        </div>
+        <div id="summary" class="summary-box">
+          No scan yet.
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Issues</h2>
+          <span class="chip">Actionable</span>
+        </div>
+
+        <div id="issuesLoading" class="issues-loading hidden">
+          <div class="spinner"></div>
+          <span>Analyzing accessibility issues...</span>
+        </div>
+
+        <div id="issues" class="issues-list"></div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>AI Fix</h2>
+          <span class="chip accent">Featherless</span>
+        </div>
+        <pre id="aiFixBox" class="output-box">No AI fix generated yet.</pre>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Deep Scan Output</h2>
+          <span class="chip">JSON</span>
+        </div>
+        <pre id="deepScanResult" class="output-box">No deep scan yet.</pre>
+      </section>
+    </main>
+  </div>
+
+  <script src="./sidepanel.js"></script>
+</body>
+</html>

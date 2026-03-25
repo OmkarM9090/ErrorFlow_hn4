@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "A11y Audit Platform",
+  "version": "1.0.0",
+  "description": "Accessibility audit extension with current page scan and deep scan.",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "scripting",
+    "storage",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "http://localhost:8787/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "A11y Audit Platform"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["injected/axe.min.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
