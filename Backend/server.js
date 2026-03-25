@@ -1,17 +1,15 @@
 require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const scrape = require('./scraper');
 const connectDB = require('./config/db');
-const authRoutes = require('./routes/authRoutes');
+const app = require('./app');
 
-const app = express();
-app.use(cors());
+const PORT = process.env.PORT || 5000;
 
-app.get('/scan', async (req, res) => {
-    const url = req.query.url;
-    const data = await scrape(url);
-    res.json(data);
-});
+const startServer = async () => {
+    await connectDB();
 
-app.listen(5000, () => console.log("Server running"));
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+};
+
+startServer();
