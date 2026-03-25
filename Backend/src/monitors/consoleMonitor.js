@@ -1,99 +1,88 @@
-/**
- * consoleMonitor.js
- *
- * Responsible ONLY for:
- *  - Attaching event listeners to a Playwright `page` BEFORE navigation
- *  - Collecting browser console output (log, warn, error, info, debug)
- *  - Collecting uncaught JavaScript runtime errors
- *
- * NOT responsible for:
- *  - Network monitoring (see networkMonitor.js)
- *  - Navigation
- *  - Any DOM extraction
- *
- * USAGE:
- *   const monitor = new ConsoleMonitor();
- *   monitor.attach(page);               // attach BEFORE page.goto()
- *   await page.goto(url, ...);
- *   const logs = monitor.getLogs();     // collect after navigation
- */
-
 class ConsoleMonitor {
   constructor() {
     this._logs = [];
     this._jsErrors = [];
+    this._attached = false;
   }
 
-  /**
-   * Attach console and error listeners to a Playwright page.
-   * Must be called BEFORE page.goto() to capture all events.
-   *
-   * @param {Page} page - Playwright page object
-   */
   attach(page) {
-    // Capture all console.* calls from the page
-    page.on('console', (msg) => {
+    if (this._attached) return;
+    this._attached = true;
+
+    page.on("console", async (msg) => {
+      let args = [];
+
+      try {
+        args = await Promise.all(
+          msg.args().map(async (arg) => {
+            try {
+              return await arg.jsonValue();
+            } catch {
+              return null;
+            }
+          })
+        );
+      } catch {
+        args = [];
+      }
+
+      const location = typeof msg.location === "function" ? msg.location() : {};
+
       this._logs.push({
-        type: msg.type(),      // 'log' | 'warn' | 'error' | 'info' | 'debug' etc.
+        type: msg.type(), // log, warn, error, info, debug
         text: msg.text(),
-        location: msg.location(), // { url, lineNumber, columnNumber }
-        timestamp: Date.now(),
+        args,
+        location: {
+          url: location?.url || null,
+          lineNumber: location?.lineNumber ?? null,
+          columnNumber: location?.columnNumber ?? null,
+        },
+        timestamp: new Date().toISOString(),
       });
     });
 
-    // Capture uncaught JS exceptions (runtime errors)
-    page.on('pageerror', (err) => {
+    page.on("pageerror", (err) => {
       this._jsErrors.push({
-        message: err.message,
-        stack: err.stack || null,
-        timestamp: Date.now(),
+        type: "runtime",
+        message: err?.message || "Unknown page error",
+        stack: err?.stack || null,
+        timestamp: new Date().toISOString(),
       });
     });
   }
 
-  /**
-   * Returns all captured console messages.
-   * @returns {object[]}
-   */
   getLogs() {
     return [...this._logs];
   }
 
-  /**
-   * Returns only console.error() messages (not uncaught exceptions).
-   * Useful for quick severity filtering.
-   * @returns {object[]}
-   */
   getErrors() {
-    return this._logs.filter(l => l.type === 'error');
+    return this._logs.filter((log) => log.type === "error");
   }
 
-  /**
-   * Returns uncaught JavaScript runtime errors.
-   * @returns {object[]}
-   */
+  getWarnings() {
+    return this._logs.filter((log) => log.type === "warning" || log.type === "warn");
+  }
+
   getJsErrors() {
     return [...this._jsErrors];
   }
 
-  /**
-   * Returns a combined summary object suitable for inclusion in audit output.
-   * @returns {{ consoleLogs: object[], jsErrors: object[] }}
-   */
   getSummary() {
     return {
-      consoleLogs: this.getLogs(),
+      totalLogs: this._logs.length,
+      totalErrors: this.getErrors().length,
+      totalWarnings: this.getWarnings().length,
+      logs: this.getLogs(),
+      errors: this.getErrors(),
+      warnings: this.getWarnings(),
       jsErrors: this.getJsErrors(),
     };
   }
 
-  /**
-   * Clear all captured data (useful if reusing monitor across pages — not recommended,
-   * better to create a fresh instance per page).
-   */
   reset() {
     this._logs = [];
     this._jsErrors = [];
+    this._attached = false;
   }
 }
 
