@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import LandingPage from './pages/LandingPage';
 import AuthPage from './components/AuthPage.jsx';
 import AccessibilityDashboard from './components/AccessibilityDashboard.jsx';
+import AuditUrlPrompt from './components/AuditUrlPrompt.jsx';
 
 import './App.css';
 
@@ -14,6 +15,8 @@ function App() {
   const [auditData, setAuditData] = useState(null);
   const [auditLoading, setAuditLoading] = useState(false);
   const [auditError, setAuditError] = useState('');
+  const [urlModalOpen, setUrlModalOpen] = useState(false);
+  const [sessionUser, setSessionUser] = useState(null);
 
   const fetchAuditAndOpenDashboard = async (targetUrl = DEFAULT_AUDIT_URL) => {
     setAuditLoading(true);
@@ -69,7 +72,7 @@ function App() {
           ) : null}
           <LandingPage
             onOpenAuth={() => setView('auth')}
-            onRunAudit={() => fetchAuditAndOpenDashboard()}
+            onRunAudit={() => setUrlModalOpen(true)}
           />
         </>
       ) : null}
@@ -77,8 +80,24 @@ function App() {
       {!auditLoading && view === 'auth' ? (
         <AuthPage
           onBackToLanding={() => setView('landing')}
-          onAuthSuccess={() => fetchAuditAndOpenDashboard()}
+          onAuthSuccess={(payload) => {
+            setSessionUser(payload || null);
+            setView('url-input');
+          }}
         />
+      ) : null}
+
+      {!auditLoading && view === 'url-input' ? (
+        <main className="min-h-screen grid place-items-center bg-[#fafafa] px-4 py-8">
+          <AuditUrlPrompt
+            initialUrl={DEFAULT_AUDIT_URL}
+            title="Choose Target Website"
+            subtitle={`Enter the website URL to audit${sessionUser?.email ? `, ${sessionUser.email}` : ''}.`}
+            submitLabel="Audit Website"
+            onSubmit={(targetUrl) => fetchAuditAndOpenDashboard(targetUrl)}
+            onCancel={() => setView('landing')}
+          />
+        </main>
       ) : null}
 
       {!auditLoading && view === 'dashboard' ? (
@@ -94,6 +113,23 @@ function App() {
           </div>
           <AccessibilityDashboard auditData={auditData || {}} />
         </>
+      ) : null}
+
+      {urlModalOpen && !auditLoading ? (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-slate-900/35 px-4 backdrop-blur-sm">
+          <AuditUrlPrompt
+            compact
+            initialUrl={DEFAULT_AUDIT_URL}
+            title="Run Accessibility Audit"
+            subtitle="Provide a target URL and start a live crawl before opening the dashboard."
+            submitLabel="Run Audit"
+            onSubmit={(targetUrl) => {
+              setUrlModalOpen(false);
+              fetchAuditAndOpenDashboard(targetUrl);
+            }}
+            onCancel={() => setUrlModalOpen(false)}
+          />
+        </div>
       ) : null}
     </div>
   );
