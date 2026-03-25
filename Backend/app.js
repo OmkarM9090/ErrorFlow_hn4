@@ -1,12 +1,7 @@
-// const express = require('express');
-// const mongoose = require('mongoose');
-// require('dotenv').config();
-
-// const app = express();
-
 const express = require("express");
 const cors = require("cors");
 const auditRouter = require("./routes/audit");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -29,24 +24,13 @@ app.use((req, _res, next) => {
   next();
 });
 
-app.use(express.json());
-
-// Connect MongoDB
-// mongoose.connect(process.env.MONGO_URI)
-//   .then(() => console.log('MongoDB connected'))
-//   .catch((err) => console.log('MongoDB connection error:', err));
-
-// Basic route
-app.use(express.json());
-
-// Basic request logger (replace with Winston/Pino in production)
-app.use((req, _res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-  next();
+// ── Routes ──────────────────────────────────────────────────────────────────
+app.get("/", (_req, res) => {
+  res.status(200).json({ status: "ok", service: "backend" });
 });
 
-// ── Routes ──────────────────────────────────────────────────────────────────
 app.use("/api/audit", auditRouter);
+app.use("/api/auth", authRoutes);
 
 // ── 404 catch-all ───────────────────────────────────────────────────────────
 app.use((_req, res) => {
