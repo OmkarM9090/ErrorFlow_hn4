@@ -1,5 +1,36 @@
-let lastScanData = null;
-let lastDeepScanData = null;
+let lastCurrentScan = null;
+let lastDeepScan = null;
+
+function $(id) {
+  return document.getElementById(id);
+}
+
+function setStatus(message) {
+  const el = $("globalStatus");
+  if (el) el.textContent = message;
+}
+
+function setLoading(isLoading, message = "Working...") {
+  const bar = $("loadingBar");
+  const issuesLoading = $("issuesLoading");
+
+  if (bar) bar.classList.toggle("hidden", !isLoading);
+  if (issuesLoading) issuesLoading.classList.toggle("hidden", !isLoading);
+
+  setStatus(isLoading ? message : "Idle");
+}
+
+function setQuickStats({
+  pages = 0,
+  violations = 0,
+  critical = 0,
+  score = "—"
+} = {}) {
+  if ($("statPages")) $("statPages").textContent = pages;
+  if ($("statViolations")) $("statViolations").textContent = violations;
+  if ($("statCritical")) $("statCritical").textContent = critical;
+  if ($("statScore")) $("statScore").textContent = score ?? "—";
+}
 
 async function getActiveTab() {
   console.log("[EXT] GET_ACTIVE_TAB called");
@@ -8,11 +39,10 @@ async function getActiveTab() {
 
 async function ensureContentScript(tabId) {
   try {
-    console.log("[EXT] Pinging content script:", tabId);
     await chrome.tabs.sendMessage(tabId, { type: "PING" });
-    console.log("[EXT] Content script already present");
+    console.log("[EXT] Content script already loaded");
   } catch {
-    console.log("[EXT] Injecting content.js:", tabId);
+    console.log("[EXT] Injecting content.js into tab:", tabId);
     await chrome.scripting.executeScript({
       target: { tabId },
       files: ["content.js"]
@@ -22,8 +52,7 @@ async function ensureContentScript(tabId) {
 }
 
 async function callAiRemediation(payload) {
-  console.log("[EXT][AI] Sending payload to /api/ai/remediate-issue");
-  console.log("[EXT][AI] Payload:", JSON.stringify(payload, null, 2));
+  console.log("[EXT][AI] Sending payload:", payload);
 
   const response = await fetch("http://localhost:8787/api/ai/remediate-issue", {
     method: "POST",
@@ -33,65 +62,32 @@ async function callAiRemediation(payload) {
     body: JSON.stringify(payload)
   });
 
-  console.log("[EXT][AI] HTTP status:", response.status);
-
   const data = await response.json();
-  console.log("[EXT][AI] Response JSON:", data);
+  console.log("[EXT][AI] Response:", data);
 
   return data;
 }
 
-function renderAiFix(aiData) {
-  const box = document.getElementById("aiFixBox");
-
-  console.log("[EXT][AI] Rendering AI fix:", aiData);
-
-  if (!aiData?.ok) {
-    box.textContent = aiData?.error || "AI fix generation failed.";
-    return;
-  }
-
-  const r = aiData.result;
-
-  box.textContent = [
-    `Title: ${r.title}`,
-    `Severity: ${r.severity}`,
-    ``,
-    `Summary:`,
-    r.summary,
-    ``,
-    `Why it matters:`,
-    r.whyItMatters,
-    ``,
-    `Likely user impact:`,
-    ...(r.likelyUserImpact || []).map((x) => `- ${x}`),
-    ``,
-    `Root cause:`,
-    r.rootCause,
-    ``,
-    `Fix strategy:`,
-    ...(r.fixStrategy || []).map((x) => `- ${x}`),
-    ``,
-    `HTML fix:`,
-    r.htmlFix,
-    ``,
-    `React fix:`,
-    r.reactFix,
-    ``,
-    `ARIA fallback:`,
-    r.ariaFallback,
-    ``,
-    `Testing checklist:`,
-    ...(r.testingChecklist || []).map((x) => `- ${x}`),
-    ``,
-    `Assumptions:`,
-    ...(r.assumptions || []).map((x) => `- ${x}`),
-    ``,
-    `Confidence: ${r.confidence}`
-  ].join("\n");
+async function checkAiHealth() {
+  const result = await chrome.runtime.sendMessage({ type: "CHECK_AI_HEALTH" });
+  console.log("[EXT] AI health:", result);
+  return result;
 }
 
-function makeIssuePayload({ item, pageUrl, pageTitle, framework }) {
+function escapeHtml(text = "") {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function countCriticalIssues(items = []) {
+  return items.filter((x) => x.impact === "critical").length;
+}
+
+function buildIssuePayload(item, pageUrl, pageTitle, framework) {
   return {
     issueId: item.id,
     help: item.help,
@@ -107,42 +103,89 @@ function makeIssuePayload({ item, pageUrl, pageTitle, framework }) {
   };
 }
 
-function createIssueCard({ item, pageUrl, pageTitle }) {
+function renderAiFix(aiData) {
+  const box = $("aiFixBox");
+
+  if (!aiData?.ok) {
+    box.textContent = aiData?.error || "AI fix generation failed.";
+    return;
+  }
+
+  const r = aiData.result || {};
+
+  box.textContent = [
+    `Title: ${r.title || ""}`,
+    `Severity: ${r.severity || ""}`,
+    ``,
+    `Summary:`,
+    r.summary || "",
+    ``,
+    `Why it matters:`,
+    r.whyItMatters || "",
+    ``,
+    `Likely user impact:`,
+    ...(r.likelyUserImpact || []).map((x) => `- ${x}`),
+    ``,
+    `Root cause:`,
+    r.rootCause || "",
+    ``,
+    `Fix strategy:`,
+    ...(r.fixStrategy || []).map((x) => `- ${x}`),
+    ``,
+    `HTML fix:`,
+    r.htmlFix || "",
+    ``,
+    `React fix:`,
+    r.reactFix || "",
+    ``,
+    `ARIA fallback:`,
+    r.ariaFallback || "",
+    ``,
+    `Testing checklist:`,
+    ...(r.testingChecklist || []).map((x) => `- ${x}`),
+    ``,
+    `Assumptions:`,
+    ...(r.assumptions || []).map((x) => `- ${x}`),
+    ``,
+    `Confidence: ${r.confidence ?? ""}`
+  ].join("\n");
+}
+
+function createIssueCard(item, pageUrl, pageTitle) {
   const el = document.createElement("div");
   el.className = "issue";
 
-  const framework = () => document.getElementById("framework").value;
+  const nodeCount = (item.nodes || []).length;
   const helpUrl = item.helpUrl || "";
+  const impact = item.impact || "unknown";
 
   el.innerHTML = `
-    <div><strong>${item.id}</strong></div>
-    <div>${item.help}</div>
-    <div class="meta">Impact: ${item.impact || "unknown"} | Nodes: ${(item.nodes || []).length}</div>
-    <div class="meta">${helpUrl}</div>
-    <button class="ai-fix-btn">Generate AI Fix</button>
+    <div><strong>${escapeHtml(item.id)}</strong></div>
+    <div>${escapeHtml(item.help || "")}</div>
+    <div class="meta">Impact: ${escapeHtml(impact)} | Nodes: ${nodeCount}</div>
+    <div class="meta">${escapeHtml(helpUrl)}</div>
+    <div class="issue-actions">
+      <button class="btn btn-primary ai-fix-btn">Generate AI Fix</button>
+    </div>
   `;
 
   const btn = el.querySelector(".ai-fix-btn");
   btn.addEventListener("click", async () => {
-    const aiBox = document.getElementById("aiFixBox");
+    const framework = $("framework")?.value || "html";
+    const aiBox = $("aiFixBox");
     aiBox.textContent = `Generating AI fix for "${item.id}"...`;
 
-    const payload = makeIssuePayload({
-      item,
-      pageUrl,
-      pageTitle,
-      framework: framework()
-    });
-
-    console.log("[EXT][AI] Generate AI Fix clicked");
-    console.log("[EXT][AI] Final payload:", payload);
+    const payload = buildIssuePayload(item, pageUrl, pageTitle, framework);
 
     try {
+      setLoading(true, "Generating AI remediation...");
       const aiResponse = await callAiRemediation(payload);
       renderAiFix(aiResponse);
     } catch (error) {
-      console.error("[EXT][AI] Request failed:", error);
-      aiBox.textContent = error.message || "AI call failed.";
+      console.error("[EXT][AI] Failed:", error);
+      aiBox.textContent = error.message || "AI request failed.";
+    } finally {
+      setLoading(false);
     }
   });
 
@@ -150,171 +193,208 @@ function createIssueCard({ item, pageUrl, pageTitle }) {
 }
 
 function renderCurrentScan(data) {
-  console.log("[EXT] renderCurrentScan called");
-  console.log("[EXT] Current scan data:", data);
+  lastCurrentScan = data;
 
-  lastScanData = data;
-
-  const summary = document.getElementById("summary");
-  const issues = document.getElementById("issues");
+  const summary = $("summary");
+  const issues = $("issues");
 
   const violations = data.result?.violations || [];
   const incomplete = data.result?.incomplete || [];
+  const totalShown = violations.length + incomplete.length;
 
   summary.innerHTML = `
-    <div><strong>${data.title}</strong></div>
-    <div>${data.url}</div>
+    <div><strong>${escapeHtml(data.title || "Untitled Page")}</strong></div>
+    <div>${escapeHtml(data.url || "")}</div>
     <div style="margin-top:8px">Violations: <strong>${violations.length}</strong></div>
     <div>Needs review: <strong>${incomplete.length}</strong></div>
   `;
 
   issues.innerHTML = "";
 
-  if (!violations.length && !incomplete.length) {
+  if (!totalShown) {
     issues.innerHTML = "<div>No issues found on this page.</div>";
+    setQuickStats({
+      pages: 1,
+      violations: 0,
+      critical: 0,
+      score: "—"
+    });
     return;
   }
 
   for (const item of violations) {
-    issues.appendChild(
-      createIssueCard({
-        item,
-        pageUrl: data.url,
-        pageTitle: data.title
-      })
-    );
+    issues.appendChild(createIssueCard(item, data.url, data.title));
   }
 
   for (const item of incomplete) {
-    issues.appendChild(
-      createIssueCard({
-        item,
-        pageUrl: data.url,
-        pageTitle: data.title
-      })
-    );
+    issues.appendChild(createIssueCard(item, data.url, data.title));
   }
+
+  setQuickStats({
+    pages: 1,
+    violations: violations.length,
+    critical: countCriticalIssues(violations),
+    score: "—"
+  });
 }
 
-function renderDeepScanIssues(response) {
-  console.log("[EXT] renderDeepScanIssues called");
-  console.log("[EXT] Deep scan data:", response);
+function renderDeepScan(data) {
+  lastDeepScan = data;
 
-  lastDeepScanData = response;
+  const summary = $("summary");
+  const issues = $("issues");
+  const deepBox = $("deepScanResult");
 
-  const issues = document.getElementById("issues");
-  const summary = document.getElementById("summary");
-  issues.innerHTML = "";
+  deepBox.textContent = JSON.stringify(data, null, 2);
 
-  const firstPage = response?.pages?.[0];
-  const pageUrl = firstPage?.url || "";
-  const pageTitle = firstPage?.axe?.title || "";
-
+  const firstPage = data?.pages?.[0];
+  const pageUrl = firstPage?.url || data?.baseUrl || "";
+  const pageTitle = firstPage?.axe?.title || "Deep Scan Result";
   const violations = firstPage?.axe?.violations || [];
   const incomplete = firstPage?.axe?.incomplete || [];
-  const s = response?.summary || {};
+  const s = data?.summary || {};
 
   summary.innerHTML = `
-    <div><strong>${pageTitle || "Deep Scan Result"}</strong></div>
-    <div>${pageUrl}</div>
+    <div><strong>${escapeHtml(pageTitle)}</strong></div>
+    <div>${escapeHtml(pageUrl)}</div>
     <div style="margin-top:8px">Pages scanned: <strong>${s.pagesScanned ?? 0}</strong></div>
     <div>Total violations: <strong>${s.totalViolations ?? 0}</strong></div>
     <div>Accessibility score: <strong>${s.avgAccessibilityScore ?? "N/A"}</strong></div>
   `;
 
+  issues.innerHTML = "";
+
   if (!violations.length && !incomplete.length) {
     issues.innerHTML = "<div>No issues found in deep scan.</div>";
-    return;
+  } else {
+    for (const item of violations) {
+      issues.appendChild(createIssueCard(item, pageUrl, pageTitle));
+    }
+
+    for (const item of incomplete) {
+      issues.appendChild(createIssueCard(item, pageUrl, pageTitle));
+    }
   }
 
-  for (const item of violations) {
-    issues.appendChild(
-      createIssueCard({
-        item,
-        pageUrl,
-        pageTitle
-      })
-    );
-  }
-
-  for (const item of incomplete) {
-    issues.appendChild(
-      createIssueCard({
-        item,
-        pageUrl,
-        pageTitle
-      })
-    );
-  }
+  setQuickStats({
+    pages: s.pagesScanned || 0,
+    violations: s.totalViolations || 0,
+    critical: s.criticalCount || 0,
+    score: s.avgAccessibilityScore ?? "—"
+  });
 }
 
-document.getElementById("scanCurrentBtn").addEventListener("click", async () => {
+async function onScanCurrentPage() {
   console.log("[EXT] Scan Current Page clicked");
 
   const { tab } = await getActiveTab();
-  if (!tab || !tab.id) {
-    console.warn("[EXT] No active tab found");
+  if (!tab?.id) {
+    console.warn("[EXT] No active tab");
     return;
   }
 
-  await ensureContentScript(tab.id);
+  try {
+    setLoading(true, "Scanning current page...");
+    await ensureContentScript(tab.id);
 
-  console.log("[EXT] Sending RUN_AXE to tab:", tab.id);
-  const response = await chrome.tabs.sendMessage(tab.id, { type: "RUN_AXE" });
-  console.log("[EXT] RUN_AXE response:", response);
+    const response = await chrome.tabs.sendMessage(tab.id, { type: "RUN_AXE" });
+    console.log("[EXT] RUN_AXE response:", response);
 
-  if (!response?.ok) {
-    document.getElementById("summary").textContent = response?.error || "Scan failed";
-    return;
+    if (!response?.ok) {
+      $("summary").textContent = response?.error || "Scan failed";
+      return;
+    }
+
+    renderCurrentScan(response);
+  } catch (error) {
+    console.error("[EXT] Current page scan failed:", error);
+    $("summary").textContent = error.message || "Scan failed";
+  } finally {
+    setLoading(false);
   }
+}
 
-  renderCurrentScan(response);
-});
-
-document.getElementById("clearBtn").addEventListener("click", async () => {
+async function onClearHighlights() {
   console.log("[EXT] Clear Highlights clicked");
 
   const { tab } = await getActiveTab();
-  if (!tab || !tab.id) return;
+  if (!tab?.id) return;
 
-  await ensureContentScript(tab.id);
-  await chrome.tabs.sendMessage(tab.id, { type: "CLEAR_OVERLAYS" });
-  console.log("[EXT] Overlays cleared");
-});
+  try {
+    await ensureContentScript(tab.id);
+    await chrome.tabs.sendMessage(tab.id, { type: "CLEAR_OVERLAYS" });
+  } catch (error) {
+    console.error("[EXT] Failed to clear overlays:", error);
+  }
+}
 
-document.getElementById("deepScanBtn").addEventListener("click", async () => {
+async function onDeepScan() {
   console.log("[EXT] Deep Scan clicked");
 
   const { tab } = await getActiveTab();
   if (!tab?.url) {
-    console.warn("[EXT] No tab URL found");
+    console.warn("[EXT] No active tab URL");
     return;
   }
 
-  const projectName = document.getElementById("projectName").value.trim() || "Untitled Project";
-  const maxPages = Number(document.getElementById("maxPages").value || 5);
+  const projectName = $("projectName")?.value.trim() || "Untitled Project";
+  const maxPages = Number($("maxPages")?.value || 5);
 
-  const resultBox = document.getElementById("deepScanResult");
-  resultBox.textContent = "Running deep scan...";
+  try {
+    setLoading(true, "Running deep scan...");
 
-  const payload = {
-    url: tab.url,
-    projectName,
-    maxPages
-  };
+    const response = await chrome.runtime.sendMessage({
+      type: "RUN_DEEP_SCAN",
+      payload: {
+        url: tab.url,
+        projectName,
+        maxPages
+      }
+    });
 
-  console.log("[EXT] Sending deep scan payload:", payload);
+    console.log("[EXT] Deep scan response:", response);
 
-  const response = await chrome.runtime.sendMessage({
-    type: "RUN_DEEP_SCAN",
-    payload
+    if (!response?.ok) {
+      $("deepScanResult").textContent = response?.error || "Deep scan failed";
+      return;
+    }
+
+    renderDeepScan(response);
+  } catch (error) {
+    console.error("[EXT] Deep scan failed:", error);
+    $("deepScanResult").textContent = error.message || "Deep scan failed";
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function boot() {
+  console.log("[EXT] AccessLens AI booting");
+
+  setQuickStats({
+    pages: 0,
+    violations: 0,
+    critical: 0,
+    score: "—"
   });
 
-  console.log("[EXT] Deep scan response:", response);
+  setStatus("Checking AI health...");
 
-  resultBox.textContent = JSON.stringify(response, null, 2);
-
-  if (response?.ok) {
-    renderDeepScanIssues(response);
+  try {
+    const ai = await checkAiHealth();
+    if (ai?.ok) {
+      setStatus("AI connected");
+    } else {
+      setStatus(`AI unavailable: ${ai?.error || "unknown error"}`);
+    }
+  } catch (error) {
+    console.error("[EXT] AI health check failed:", error);
+    setStatus("AI unavailable");
   }
-});
+
+  $("scanCurrentBtn")?.addEventListener("click", onScanCurrentPage);
+  $("clearBtn")?.addEventListener("click", onClearHighlights);
+  $("deepScanBtn")?.addEventListener("click", onDeepScan);
+}
+
+document.addEventListener("DOMContentLoaded", boot);

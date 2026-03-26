@@ -20,6 +20,7 @@ const tabs = [
   { key: 'dom', label: 'DOM Visuals' },
   { key: 'performance', label: 'Performance' },
   { key: 'ai', label: 'AI Fixes' },
+  { key: 'optimized', label: 'Optimized Code' },
 ];
 
 const TabPanel = ({ tabKey, activeTab, children }) => (
@@ -62,6 +63,13 @@ export default function AccessibilityDashboard({ auditData }) {
   const [aiInsights, setAiInsights] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [optimizedUrl, setOptimizedUrl] = useState(null);
+  const [isPushing, setIsPushing] = useState(false);
+  const [prUrl, setPrUrl] = useState(null);
+  const [showPrModal, setShowPrModal] = useState(false);
+  const [repoInput, setRepoInput] = useState('');
+  const [optimizedCode, setOptimizedCode] = useState(null);
 
   const model = useMemo(
     () => buildDashboardModel(auditData || {}, simulateErrors),
@@ -119,6 +127,68 @@ export default function AccessibilityDashboard({ auditData }) {
     }
   };
 
+<<<<<<< Updated upstream
+=======
+  const handleOptimizePreview = async () => {
+    setIsOptimizing(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/audit/optimize-output`, {
+        method: 'POST',
+      });
+      if (!response.ok) {
+        throw new Error('Optimization failed');
+      }
+      const data = await response.json();
+      
+      const previewUrl = `${API_BASE_URL}/api/audit/optimized-preview-page`;
+      setOptimizedUrl(previewUrl);
+      setOptimizedCode(data.data?.code || null);
+      setActiveTab('optimized');
+    } catch (error) {
+      console.error(error);
+      alert("Failed to optimize website. Please try again.");
+    } finally {
+      setIsOptimizing(false);
+    }
+  };
+
+  const handleOpenPrModal = () => {
+    const defaultOwner = window.localStorage.getItem('connectedGithubId') || 'OmkarM9090';
+    setRepoInput(`${defaultOwner}/ErrorFlow_hn4`);
+    setShowPrModal(true);
+  };
+
+  const handleGithubPush = async (e) => {
+    e.preventDefault();
+    const repoFullName = repoInput.trim();
+    
+    if (!repoFullName) return;
+
+    setIsPushing(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/github/push-pr`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ repoFullName })
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || 'Failed to push to GitHub');
+      }
+
+      const data = await response.json();
+      setPrUrl(data.prUrl);
+      alert('Pull Request created successfully!');
+      setShowPrModal(false);
+    } catch (error) {
+      console.error(error);
+      alert(error.message || 'Failed to send PR. Check console for details.');
+    } finally {
+      setIsPushing(false);
+    }
+  };
+>>>>>>> Stashed changes
 
   return (
     <section className="relative min-h-screen overflow-x-hidden bg-[#fafafa] px-4 py-10 md:px-12 font-sans">
@@ -383,7 +453,166 @@ export default function AccessibilityDashboard({ auditData }) {
             hasAuditData={!!auditData}
           />
         </TabPanel>
+
+        <TabPanel tabKey="optimized" activeTab={activeTab}>
+          <div className="rounded-[2rem] border border-slate-100 bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            <div className="mb-6 flex flex-col items-start gap-4 border-b border-slate-100 pb-6 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h3 className="inline-flex items-center gap-2 font-serif text-2xl text-slate-900">
+                  <Code2 size={24} className="text-emerald-500" /> Optimized Outputs
+                </h3>
+                <p className="mt-1 text-sm text-slate-500">AI-generated raw code modifications ready for integration.</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleOptimizePreview}
+                  disabled={isOptimizing}
+                  className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition disabled:cursor-not-allowed disabled:opacity-75"
+                >
+                  <Eye size={18} />
+                  {isOptimizing ? 'Optimizing...' : 'Optimize & Preview'}
+                </button>
+
+                {optimizedUrl && (
+                  <>
+                    <a
+                      href={optimizedUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-700"
+                    >
+                      <Eye size={18} />
+                      Preview Full Site
+                    </a>
+                    
+                    {!prUrl && (
+                      <button
+                        type="button"
+                        onClick={handleOpenPrModal}
+                        disabled={isPushing}
+                        className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition disabled:cursor-not-allowed disabled:opacity-75"
+                      >
+                        <Code2 size={18} />
+                        {isPushing ? 'Pushing...' : 'Send PR'}
+                      </button>
+                    )}
+
+                    {prUrl && (
+                      <a
+                        href={prUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 rounded-2xl border border-emerald-200 bg-emerald-50 px-6 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100"
+                      >
+                        <Code2 size={18} />
+                        View Pull Request
+                      </a>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+
+            {optimizedCode ? (
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                {['html', 'css', 'js'].map((ext) => (
+                  <div key={ext} className="flex h-[500px] flex-col">
+                    <div className="flex items-center justify-between rounded-t-2xl border border-b-0 border-slate-800 bg-slate-900 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-300">
+                      <span>{ext.toUpperCase()}</span>
+                      <button 
+                        onClick={() => navigator.clipboard.writeText(optimizedCode[ext] || '')}
+                        className="cursor-pointer transition hover:text-white"
+                        title={`Copy ${ext.toUpperCase()}`}
+                      >
+                        Copy
+                      </button>
+                    </div>
+                    <div className="custom-scrollbar flex-1 overflow-auto rounded-b-2xl border border-slate-800 bg-[#0f172a] p-4">
+                      <pre className="break-words whitespace-pre-wrap font-mono text-[13px] leading-relaxed text-slate-300">
+                        {optimizedCode[ext] || `/* No ${ext.toUpperCase()} output generated */`}
+                      </pre>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-slate-200 bg-slate-50/50 py-20 text-center">
+                <div className="mb-4 rounded-full bg-white p-4 shadow-sm">
+                  <Code2 size={32} className="text-slate-400" />
+                </div>
+                <h3 className="font-serif text-xl text-slate-700">No Code Optimized Yet</h3>
+                <p className="mt-2 max-w-sm text-sm text-slate-500">Click the "Optimize & Preview" button above to process your assets and view the generated code.</p>
+              </div>
+            )}
+          </div>
+        </TabPanel>
       </div>
+
+      {/* Send PR Modal */}
+      {showPrModal && (
+        <>
+          <div 
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 transition-opacity"
+            onClick={() => !isPushing && setShowPrModal(false)}
+          />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+            <div className="w-full max-w-md mx-auto rounded-[2rem] border border-slate-200 bg-white p-6 md:p-8 shadow-[0_16px_50px_rgba(15,23,42,0.08)] pointer-events-auto">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-serif text-2xl text-slate-900">Send Pull Request</h3>
+                <button
+                  type="button"
+                  onClick={() => setShowPrModal(false)}
+                  disabled={isPushing}
+                  className="p-1.5 rounded-lg hover:bg-slate-100 transition disabled:opacity-50"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-500"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+              </div>
+
+              <form className="space-y-5" onSubmit={handleGithubPush}>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1" htmlFor="repo-input">
+                    Target Repository
+                  </label>
+                  <p className="text-xs text-slate-500 mb-2">Format exactly as: <strong>owner/repo</strong></p>
+                  <input
+                    id="repo-input"
+                    type="text"
+                    required
+                    value={repoInput}
+                    onChange={(e) => setRepoInput(e.target.value)}
+                    placeholder="e.g. OmkarM9090/ErrorFlow_hn4"
+                    disabled={isPushing}
+                    className="w-full rounded-2xl border border-slate-200 bg-white py-3 px-4 text-slate-900 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 disabled:opacity-50"
+                  />
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <button
+                    type="submit"
+                    disabled={isPushing || !repoInput.trim()}
+                    className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 disabled:opacity-75 disabled:cursor-not-allowed"
+                  >
+                    <Code2 size={16} />
+                    {isPushing ? 'Sending PR...' : 'Send PR'}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPrModal(false)}
+                    disabled={isPushing}
+                    className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:border-slate-300 disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </>
+      )}
+
     </section>
   );
 }

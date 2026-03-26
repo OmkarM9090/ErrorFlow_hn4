@@ -24,6 +24,7 @@ const {
   getSharedReport,
 } = require('../src/services/reportExportService');
 const { generateAIInsights } = require('../controllers/insightsEngine');
+const { generateOptimizedOutput, getOptimizedPreview } = require('../controllers/outputOptimizer.controller');
 
 /**
  * POST /api/audit
@@ -224,4 +225,6 @@ router.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'audit' });
 });
 
+router.post('/optimize-output', generateOptimizedOutput);
+router.get('/optimized-preview-page', getOptimizedPreview);
 module.exports = router;

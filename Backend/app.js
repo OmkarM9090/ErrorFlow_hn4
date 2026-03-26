@@ -1,8 +1,12 @@
+const dotenv = require("dotenv");
+dotenv.config();
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const auditRouter = require("./routes/audit");
 const authRoutes = require("./routes/authRoutes");
+const githubRouter = require("./routes/github");
 
 const app = express();
 
@@ -20,7 +24,8 @@ app.use(
       if (!origin) return callback(null, true);
 
       const isAllowedOrigin =
-        allowedOrigins.includes(origin) || /^http:\/\/localhost:\d+$/.test(origin);
+        allowedOrigins.includes(origin) ||
+        /^http:\/\/localhost:\d+$/.test(origin);
 
       if (isAllowedOrigin) return callback(null, true);
       return callback(new Error(`Not allowed by CORS: ${origin}`));
@@ -32,7 +37,7 @@ app.use(
 );
 
 // ── Middleware ──────────────────────────────────────────────────────────────
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: "10mb" }));
 
 // Basic request logger (replace with Winston/Pino in production)
 app.use((req, _res, next) => {
@@ -47,9 +52,14 @@ app.get("/", (_req, res) => {
 
 app.use("/api/audit", auditRouter);
 app.use("/api/auth", authRoutes);
+app.use("/api/github", githubRouter);
 
 // ── Static files ────────────────────────────────────────────────────────────
-app.use('/screenshots', express.static(path.join(__dirname, 'output/screenshots')));
+app.use(
+  "/screenshots",
+  express.static(path.join(__dirname, "output/screenshots")),
+);
+app.use("/output", express.static(path.join(process.cwd(), "output")));
 
 // ── 404 catch-all ───────────────────────────────────────────────────────────
 app.use((_req, res) => {
