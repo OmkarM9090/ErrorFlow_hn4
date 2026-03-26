@@ -104,20 +104,46 @@ ErrorFlow/
 │   │   ├── renderer/
 │   │   ├── extractor/
 │   │   └── services/
+│   ├── repositories/
+│   ├── config/
 │   ├── utils/
 │   └── output/
 │
 ├── Frontend/
-│   ├── components/
-│   ├── pages/
-│   └── App.jsx
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── common/
+│   │   │   ├── landing/
+│   │   │   ├── AccessibilityDashboard.jsx
+│   │   │   ├── VisualPreview.jsx
+│   │   │   ├── InsightsPanel.jsx
+│   │   │   └── AuthPage.jsx
+│   │   │
+│   │   ├── pages/
+│   │   │   └── LandingPage.jsx
+│   │   │
+│   │   ├── utils/
+│   │   │   └── dashboardLogic.js
+│   │   │
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   │
+│   ├── public/
+│   └── index.html
 │
 ├── Extension/
-│   ├── content scripts
-│   ├── background scripts
-│   └── sidepanel
+│   ├── background.js
+│   ├── content.js
+│   ├── manifest.json
+│   ├── sidepanel/
+│   │   ├── sidepanel.html
+│   │   ├── sidepanel.js
+│   │   └── sidepanel.css
+│   ├── injected/
+│   └── icons/
 │
 └── README.md
+
 🔄 Workflow
 🧩 Audit Flow
 User enters a URL
