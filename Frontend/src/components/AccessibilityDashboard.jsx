@@ -11,7 +11,7 @@ import VisualPreview from './VisualPreview';
 
 import { buildDashboardModel, ringColorByScore } from '../utils/dashboardLogic.js';
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000').replace(/\/$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
 const tabs = [
   { key: 'overview', label: 'Overview' },
@@ -127,8 +127,6 @@ export default function AccessibilityDashboard({ auditData }) {
     }
   };
 
-<<<<<<< Updated upstream
-=======
   const handleOptimizePreview = async () => {
     setIsOptimizing(true);
     try {
@@ -188,7 +186,6 @@ export default function AccessibilityDashboard({ auditData }) {
       setIsPushing(false);
     }
   };
->>>>>>> Stashed changes
 
   return (
     <section className="relative min-h-screen overflow-x-hidden bg-[#fafafa] px-4 py-10 md:px-12 font-sans">

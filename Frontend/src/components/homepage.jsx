@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+
 function Homepage() {
   const [url, setUrl] = useState("");
   const [data, setData] = useState(null);
@@ -15,7 +17,7 @@ function Homepage() {
     setData(null);
 
     try {
-      const res = await fetch(`http://localhost:3000/api/audit`, {
+      const res = await fetch(`${API_BASE_URL}/api/audit`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

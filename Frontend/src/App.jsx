@@ -8,7 +8,7 @@ import AuditLoader from './components/common/AuditLoader.jsx';
 
 import './App.css';
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000').replace(/\/$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 // const DEFAULT_AUDIT_URL = 'https://portfolio-50590.web.app/'; 
 
 function App() {

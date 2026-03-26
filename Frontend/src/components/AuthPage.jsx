@@ -6,7 +6,7 @@ import { ArrowLeft, Mail, Lock, KeyRound, ShieldCheck, Sparkles } from 'lucide-r
 import Button from '../components/common/Button'; 
 import Badge from '../components/common/Badge';
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000').replace(/\/$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
 const AUTH_ACTIONS = {
   signup: {
