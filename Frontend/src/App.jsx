@@ -3,7 +3,6 @@ import LandingPage from './pages/LandingPage';
 import AuthPage from './components/AuthPage.jsx';
 import AccessibilityDashboard from './components/AccessibilityDashboard.jsx';
 import AuditUrlPrompt from './components/AuditUrlPrompt.jsx';
-import AccessibilityControls from './components/AccessibilityControls';
 import { Loader2 } from 'lucide-react'; // Added for a premium loading spinner
 import AuditLoader from './components/common/AuditLoader.jsx';
 
@@ -68,9 +67,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-500 selection:text-white overflow-x-hidden">
-      
-      {/* Accessibility Tools (Global) */}
-      <AccessibilityControls />
 
       {/* 1. LOADING OVERLAY (Full Screen) */}
       {auditLoading ? (
