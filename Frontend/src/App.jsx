@@ -5,6 +5,7 @@ import AccessibilityDashboard from './components/AccessibilityDashboard.jsx';
 import AuditUrlPrompt from './components/AuditUrlPrompt.jsx';
 import AccessibilityControls from './components/AccessibilityControls';
 import { Loader2 } from 'lucide-react'; // Added for a premium loading spinner
+import AuditLoader from './components/common/AuditLoader.jsx';
 
 import './App.css';
 
@@ -73,13 +74,7 @@ function App() {
 
       {/* 1. LOADING OVERLAY (Full Screen) */}
       {auditLoading ? (
-        <div className="min-h-screen flex flex-col items-center justify-center px-6">
-          <div className="rounded-3xl border border-slate-200 bg-white px-10 py-8 shadow-[0_8px_30px_rgb(0,0,0,0.08)] flex flex-col items-center text-center">
-            <Loader2 className="animate-spin text-indigo-600 mb-4" size={48} />
-            <p className="text-lg font-serif font-semibold text-slate-900">Running AI Accessibility Audit...</p>
-            <p className="mt-2 text-sm text-slate-500">Please wait while we crawl and analyze the website.</p>
-          </div>
-        </div>
+        <AuditLoader />
       ) : null}
 
       {/* 2. LANDING PAGE VIEW */}
@@ -111,10 +106,10 @@ function App() {
 
       {/* 4. URL INPUT VIEW (After Login) */}
       {!auditLoading && view === 'url-input' ? (
-        <main className="min-h-screen grid place-items-center bg-[#fafafa] px-4 py-8">
-          <div className="w-full max-w-3xl relative">
+        <main className="min-h-screen flex items-center justify-center bg-[#fafafa]">
+          {/* REMOVED the max-w-3xl wrapper so the Bento layout can stretch properly */}
+          <div className="w-full">
             <AuditUrlPrompt
-              // initialUrl={DEFAULT_AUDIT_URL}
               title="Choose Target Website"
               subtitle={`Enter the website URL to audit${sessionUser?.email ? `, ${sessionUser.email}` : ''}.`}
               submitLabel="Start AI Audit"

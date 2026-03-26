@@ -84,6 +84,7 @@ router.post('/', async (req, res) => {
       maxDepth,
       maxPages,
       captureScreenshots: screenshots,
+      standard, // Pass the standard to the service
       axe: {
         runOnly,
       }

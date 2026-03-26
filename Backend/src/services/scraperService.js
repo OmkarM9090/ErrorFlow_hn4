@@ -48,6 +48,20 @@ async function runAudit(startUrl, userOptions = {}) {
     axe: { ...DEFAULT_OPTIONS.axe, ...(userOptions.axe || {}) },
   };
 
+  // Map standards to axe-core tags
+  const axeTagsMap = {
+    'wcag2aa': ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'],
+    'wcag2aaa': ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag2aaa', 'wcag21aaa', 'best-practice'],
+    'section508': ['section508', 'best-practice'],
+    'en301549': ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'] // EN 301 549 maps mostly to WCAG 2.1 AA
+  };
+
+  // Override runOnly based on standard if provided
+  if (userOptions.standard) {
+    const standardKey = userOptions.standard.toLowerCase();
+    options.axe.runOnly = axeTagsMap[standardKey] || axeTagsMap['wcag2aa'];
+  }
+
   const crawler      = new Crawler(startUrl, { maxDepth: options.maxDepth, maxPages: options.maxPages });
   const renderer     = new Renderer();
   const extractor    = new Extractor();
