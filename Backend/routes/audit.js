@@ -38,6 +38,7 @@ router.post('/', async (req, res) => {
     maxDepth = 2,
     maxPages = 20,
     screenshots = true,
+    standard = 'WCAG2AA', // Default standard
   } = req.body;
 
   // ── Input validation ────────────────────────────────────────────────────
@@ -63,6 +64,18 @@ router.post('/', async (req, res) => {
     return res.status(400).json({
       error: 'maxPages must be a number between 1 and 100.',
     });
+  } 
+
+  // Map standard to axe-core tags
+  let runOnly = ['wcag2a', 'wcag2aa', 'best-practice'];
+  const std = standard.toUpperCase();
+  
+  if (std === 'WCAG2AAA') {
+    runOnly = ['wcag2a', 'wcag2aa', 'wcag2aaa'];
+  } else if (std === 'SECTION508') {
+    runOnly = ['section508'];
+  } else if (std === 'EN301549') {
+    runOnly = ['wcag2a', 'wcag2aa', 'best-practice']; // EN 301 549 maps mostly to WCAG 2.1 AA
   }
 
   // ── Run audit ───────────────────────────────────────────────────────────
@@ -71,6 +84,9 @@ router.post('/', async (req, res) => {
       maxDepth,
       maxPages,
       captureScreenshots: screenshots,
+      axe: {
+        runOnly,
+      }
     });
 
     return res.status(200).json(result);

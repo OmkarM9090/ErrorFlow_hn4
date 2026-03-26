@@ -270,10 +270,10 @@ export default function AccessibilityDashboard({ auditData }) {
                 <Accessibility size={22} className="text-indigo-600" />
                 Inclusive Experience Matrix
               </h3>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {model.impactMatrix.map((row) => (
-                  <div key={row.label}>
-                    <div className="mb-1 flex items-center justify-between text-sm">
+                  <div key={row.label} className="group">
+                    <div className="mb-2 flex items-center justify-between text-sm">
                       <span className="font-medium text-slate-700">{row.label}</span>
                       <span className="font-semibold text-slate-900">{row.value}%</span>
                     </div>
@@ -283,6 +283,29 @@ export default function AccessibilityDashboard({ auditData }) {
                         style={{ width: `${row.value}%`, backgroundColor: row.color }}
                       />
                     </div>
+                    
+                    {/* Render Reasons if any */}
+                    {row.reasons && row.reasons.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {row.reasons.map((reason, idx) => (
+                          <div 
+                            key={idx} 
+                            className="inline-flex items-center gap-1.5 rounded-md border border-slate-100 bg-slate-50 px-2 py-1 text-[11px] text-slate-600"
+                          >
+                            <span 
+                              className="font-bold" 
+                              style={{ color: row.color }}
+                            >
+                              -{reason.count}
+                            </span>
+                            <span>{reason.message}</span>
+                            <span className="rounded bg-slate-200 px-1 py-0.5 text-[10px] font-medium text-slate-500">
+                              WCAG {reason.wcag}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

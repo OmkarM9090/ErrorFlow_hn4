@@ -3,6 +3,7 @@ import LandingPage from './pages/LandingPage';
 import AuthPage from './components/AuthPage.jsx';
 import AccessibilityDashboard from './components/AccessibilityDashboard.jsx';
 import AuditUrlPrompt from './components/AuditUrlPrompt.jsx';
+import AccessibilityControls from './components/AccessibilityControls';
 import { Loader2 } from 'lucide-react'; // Added for a premium loading spinner
 
 import './App.css';
@@ -19,22 +20,23 @@ function App() {
   const [sessionUser, setSessionUser] = useState(null);
 
   // Main API Call Function
-  const fetchAuditAndOpenDashboard = async (targetUrl = DEFAULT_AUDIT_URL) => {
+  const fetchAuditAndOpenDashboard = async (targetUrl = DEFAULT_AUDIT_URL, standard = 'WCAG2AA') => {
     setAuditLoading(true);
     setAuditError('');
     setUrlModalOpen(false); // Modal turant close karein loading start hote hi
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/audit`, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  // Pura payload hata kar sirf URL bhejein taaki backend default values use kare
-  body: JSON.stringify({
-    url: targetUrl 
-  }),
-});
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // Pura payload hata kar sirf URL bhejein taaki backend default values use kare
+        body: JSON.stringify({
+          url: targetUrl,
+          standard
+        }),
+      });
 
       // Handle non-200 responses safely
       if (!response.ok) {
@@ -66,6 +68,9 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-500 selection:text-white overflow-x-hidden">
       
+      {/* Accessibility Tools (Global) */}
+      <AccessibilityControls />
+
       {/* 1. LOADING OVERLAY (Full Screen) */}
       {auditLoading ? (
         <div className="min-h-screen flex flex-col items-center justify-center px-6">
@@ -113,7 +118,7 @@ function App() {
               title="Choose Target Website"
               subtitle={`Enter the website URL to audit${sessionUser?.email ? `, ${sessionUser.email}` : ''}.`}
               submitLabel="Start AI Audit"
-              onSubmit={(targetUrl) => fetchAuditAndOpenDashboard(targetUrl)}
+              onSubmit={(targetUrl, standard) => fetchAuditAndOpenDashboard(targetUrl, standard)}
               onCancel={() => setView('landing')}
             />
           </div>
@@ -155,8 +160,8 @@ function App() {
               title="Run Accessibility Audit"
               subtitle="Provide a target URL and start a live crawl before opening the dashboard."
               submitLabel="Run Audit"
-              onSubmit={(targetUrl) => {
-                fetchAuditAndOpenDashboard(targetUrl);
+              onSubmit={(targetUrl, standard) => {
+                fetchAuditAndOpenDashboard(targetUrl, standard);
               }}
               onCancel={() => setUrlModalOpen(false)}
             />

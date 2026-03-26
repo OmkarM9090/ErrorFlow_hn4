@@ -20,6 +20,7 @@ export default function AuditUrlPrompt({
   compact = false,
 }) {
   const [url, setUrl] = useState(initialUrl || '');
+  const [standard, setStandard] = useState('WCAG2AA');
   const [error, setError] = useState('');
 
   const normalizedUrl = useMemo(() => url.trim(), [url]);
@@ -39,7 +40,7 @@ export default function AuditUrlPrompt({
 
     setError('');
     if (typeof onSubmit === 'function') {
-      onSubmit(normalizedUrl);
+      onSubmit(normalizedUrl, standard);
     }
   };
 
@@ -68,6 +69,22 @@ export default function AuditUrlPrompt({
             placeholder="https://example.com"
             className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-slate-900 shadow-sm outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200"
           />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+           <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-1">Standard</label>
+              <select 
+                value={standard} 
+                onChange={(e) => setStandard(e.target.value)}
+                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-indigo-500 outline-none"
+              >
+                <option value="WCAG2AA">WCAG 2.1 AA (Default)</option>
+                <option value="WCAG2AAA">WCAG 2.1 AAA (Strict)</option>
+                <option value="SECTION508">Section 508</option>
+                <option value="EN301549">EN 301 549</option>
+              </select>
+           </div>
         </div>
 
         {error ? (

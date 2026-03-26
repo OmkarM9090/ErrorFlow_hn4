@@ -70,11 +70,69 @@ export const buildDashboardModel = (auditData, simulateErrors) => {
     { dimension: 'Robust', score: Math.max(0, Math.round(100 - (critical * 2) - (minor * 0.5))) },
   ];
 
+  const rules = accessSummary.issuesPerRule || {};
+
+  const getReasons = (categories) => {
+    const reasons = [];
+    categories.forEach(cat => {
+      if (rules[cat.id]) {
+        reasons.push({ 
+          message: cat.msg, 
+          count: rules[cat.id].count || 0, 
+          wcag: cat.wcag 
+        });
+      }
+    });
+    return reasons;
+  };
+
   const impactMatrix = [
-    { label: 'Visual', value: Math.max(0, Math.round(100 - (critical * 3) - (serious * 2))), color: '#e11d48' },
-    { label: 'Motor', value: Math.max(0, Math.round(100 - (serious * 2) - (moderate * 0.5))), color: '#f97316' },
-    { label: 'Cognitive', value: Math.max(0, Math.round(100 - (moderate * 1) - (minor * 0.5))), color: '#eab308' },
-    { label: 'Auditory', value: Math.max(0, Math.round(100 - (minor * 1))), color: '#3b82f6' },
+    { 
+      label: 'Visual', 
+      value: Math.max(0, Math.round(100 - (critical * 3) - (serious * 2))), 
+      color: '#e11d48',
+      reasons: getReasons([
+        { id: 'color-contrast', msg: 'Low text contrast', wcag: '1.4.3' },
+        { id: 'image-alt', msg: 'Missing image alt text', wcag: '1.1.1' },
+        { id: 'document-title', msg: 'Missing page title', wcag: '2.4.2' },
+        { id: 'meta-viewport', msg: 'Zoom disabled', wcag: '1.4.4' }
+      ])
+    },
+    { 
+      label: 'Motor', 
+      value: Math.max(0, Math.round(100 - (serious * 2) - (moderate * 0.5))), 
+      color: '#f97316',
+      reasons: getReasons([
+        { id: 'button-name', msg: 'Buttons missing names', wcag: '4.1.2' },
+        { id: 'link-name', msg: 'Links missing names', wcag: '2.4.4' },
+        { id: 'region', msg: 'No landmarks found', wcag: '1.3.1' },
+        { id: 'bypass', msg: 'Skip links missing', wcag: '2.4.1' }
+      ])
+    },
+    { 
+      label: 'Cognitive', 
+      value: Math.max(0, Math.round(100 - (moderate * 1) - (minor * 0.5))), 
+      color: '#eab308',
+      reasons: getReasons([
+        { id: 'label', msg: 'Missing form labels', wcag: '3.3.2' },
+        { id: 'html-has-lang', msg: 'Language not specified', wcag: '3.1.1' },
+        { id: 'frame-title', msg: 'Frames missing titles', wcag: '2.4.1' },
+        { id: 'heading-order', msg: 'Illogical heading order', wcag: '1.3.1' },
+        { id: 'autocomplete-valid', msg: 'Autocomplete missing', wcag: '1.3.5' },
+        { id: 'meta-refresh', msg: 'Page refreshes automatically', wcag: '2.2.1' },
+        { id: 'blink', msg: 'Blinking content', wcag: '2.2.2' },
+        { id: 'marquee', msg: 'Moving content', wcag: '2.2.2' }
+      ])
+    },
+    { 
+      label: 'Auditory', 
+      value: Math.max(0, Math.round(100 - (minor * 1))), 
+      color: '#3b82f6',
+      reasons: getReasons([
+        { id: 'video-caption', msg: 'Missing video captions', wcag: '1.2.2' },
+        { id: 'audio-caption', msg: 'Missing audio captions', wcag: '1.2.1' }
+      ])
+    },
   ];
 
   const elementDistribution = [
@@ -96,7 +154,7 @@ export const buildDashboardModel = (auditData, simulateErrors) => {
   ];
 
   const empathyMessages = [];
-  const rules = accessSummary.issuesPerRule || {};
+  // const rules already declared above
   if (rules['button-name']) empathyMessages.push(`Screen reader users are confused by ${rules['button-name'].count} button(s) lacking an accessible name.`);
   if (rules['color-contrast']) empathyMessages.push(`Visually impaired users struggle to read text on ${rules['color-contrast'].count} element(s) due to low contrast.`);
   if (rules['link-name']) empathyMessages.push(`Users relying on assistive tech cannot determine the destination of ${rules['link-name'].count} link(s).`);

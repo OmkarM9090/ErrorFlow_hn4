@@ -6,6 +6,19 @@
  */
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const fs = require('fs');
+const path = require('path');
+
+// Load WCAG Rules for RAG
+const wcagRulesPath = path.join(__dirname, '../data/wcagRules.json');
+let wcagRules = {};
+try {
+  if (fs.existsSync(wcagRulesPath)) {
+    wcagRules = JSON.parse(fs.readFileSync(wcagRulesPath, 'utf8'));
+  }
+} catch (error) {
+  console.warn("Failed to load WCAG rules:", error.message);
+}
 
 // ── Lazy singleton ──────────────────────────────────────────────────────────
 let geminiClient = null;
@@ -76,6 +89,28 @@ function buildCompactAuditData(auditData) {
 
 // ── Prompt builder ──────────────────────────────────────────────────────────
 function buildPrompt(compactData) {
+  // RAG: Build knowledge base context from detected issues
+  const detectedIssues = new Set();
+  
+  // Collect issues from allIssues object (flatten categories)
+  if (compactData.allIssues) {
+    Object.values(compactData.allIssues).forEach(categoryObj => {
+      Object.keys(categoryObj).forEach(code => detectedIssues.add(code));
+    });
+  }
+
+  let knowledgeBase = [];
+  detectedIssues.forEach(code => {
+    if (wcagRules && wcagRules[code]) {
+      const r = wcagRules[code];
+      knowledgeBase.push(`- ISSUE: "${code}" → WCAG ${r.level} Criterion ${r.ruleId} ("${r.name}").\n  Definition: ${r.description}\n  Fix Guidance: Check ${r.helpUrl}`);
+    }
+  });
+
+  const ragContext = knowledgeBase.length > 0 
+    ? `\n=== WCAG KNOWLEDGE BASE (RAG CONTEXT) ===\nUse these official rules to generate accurate technical fixes:\n${knowledgeBase.join('\n')}\n`
+    : "";
+
   return `
 You are an expert Web Accessibility (WCAG 2.1 AA) auditor, SEO analyst, and UX performance consultant.
 
@@ -83,6 +118,8 @@ Analyze the following website accessibility audit data and return ONLY valid JSO
 
 AUDIT DATA:
 ${JSON.stringify(compactData, null, 2)}
+
+${ragContext}
 
 OUTPUT SCHEMA — return exactly this structure:
 {
