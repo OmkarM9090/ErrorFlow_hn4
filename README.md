@@ -1,4 +1,4 @@
-<h1 align="center">🚀 EA11AUDIT — AI-Powered Web Accessibility Audit Platform</h1>
+<h1 align="center">🚀 A11YAUDIT — AI-Powered Web Accessibility Audit Platform</h1>
 
 <p align="center">
   <i>A full-stack, automated accessibility auditing platform built to identify, visualize, and fix WCAG 2.2 compliance issues across modern web applications.</i>
